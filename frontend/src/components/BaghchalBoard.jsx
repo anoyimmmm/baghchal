@@ -5,8 +5,8 @@ import Piece from "./Piece";
 const BaghChalBoard = () => {
   const boardSize = 4; // 5x5 grid (0-4 indices)
   const cellSize = 180;
-  const padding = 35;
-  const pieceRadius = 35;
+  const padding = 40;
+  const pieceRadius = 40;
   const svgSize = padding * 2 + boardSize * cellSize;
 
   const [gameState, setGameState] = useState({
