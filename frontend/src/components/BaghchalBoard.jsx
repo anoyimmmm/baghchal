@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./BaghChalBoard.css";
 import Piece from "./Piece";
 
 const BaghChalBoard = () => {
@@ -40,7 +39,7 @@ const BaghChalBoard = () => {
           selectedPiece: null,
           // highlightedPieces: [],
         }));
-        console.log(gameState.highlightedPieces);
+        // console.log(gameState.highlightedPieces);
         console.log(
           `disselected Piece at (${row}, ${col}) with piece: ${pieceType}`
         );
@@ -55,7 +54,6 @@ const BaghChalBoard = () => {
         );
       }
     }
-    // select unselect
   };
 
   const handlePieceHover = (row, col, isEntering) => {
