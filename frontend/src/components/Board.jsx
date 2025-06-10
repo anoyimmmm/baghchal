@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import Piece from "./Piece";
+import { moveConnections, captureConnections } from "./utilities/ValidMove.js";
 
 const Board = () => {
-  const boardSize = 4; // 5x5 grid (0-4 indices)
+  const boardSize = 4;
   const cellSize = 180;
   const pieceRadius = 40;
   const padding = pieceRadius + 1;
@@ -21,7 +22,7 @@ const Board = () => {
       "3-1": "goat",
     },
     selectedPiece: null,
-    activePiece: null,
+    activePiece: null, // this is the non-null piece clicked before clicking a null piece
     unusedGoat: 24,
     deadGoatCount: 0,
     // highlightedPieces: [],
@@ -33,28 +34,7 @@ const Board = () => {
 
   const handlePieceClick = (row, col, pieceType) => {
     const pieceKey = `${row}-${col}`;
-
-    if (isValidSelection(pieceKey, pieceType)) {
-      if (gameState.selectedPiece === pieceKey) {
-        setGameState((prev) => ({
-          ...prev,
-          selectedPiece: null,
-          // highlightedPieces: [],
-        }));
-        console.log(
-          `disselected Piece at (${row}, ${col}) with piece: ${pieceType}`
-        );
-      } else {
-        setGameState((prev) => ({
-          ...prev,
-          selectedPiece: pieceKey,
-          // highlightedPieces: [...prev.highlightedPieces, pieceKey],
-        }));
-        console.log(
-          `selected Piece at (${row}, ${col}) with piece: ${pieceType}`
-        );
-      }
-    }
+    handleSelection(row, col, pieceType);
   };
 
   const handlePieceHover = (row, col, isEntering) => {
@@ -200,34 +180,60 @@ const Board = () => {
     return pieces;
   };
 
-  const isValidSelection = (pieceKey, pieceType) => {
-    // for goat
-    if (gameState.currentPlayer === "goat") {
-      if (gameState.phase === "placement" && pieceType === null) {
-        return true;
-      } else if (gameState.phase === "displacement" && pieceType == "goat") {
-        setGameState((prev) => ({ ...prev, activePiece: pieceKey }));
-        return true;
-      } else if (
-        gameState.phase == "displacement" &&
-        gameState.activePiece &&
-        !pieceType
-      ) {
-        return true;
+  const handleSelection = (row, col, pieceType) => {
+    const pieceKey = `${row}-${col}`;
+
+    const isValidSelection = (pieceKey, pieceType) => {
+      // for goat
+      if (gameState.currentPlayer === "goat") {
+        if (gameState.phase === "placement" && pieceType === null) {
+          return true;
+        } else if (gameState.phase === "displacement" && pieceType == "goat") {
+          setGameState((prev) => ({ ...prev, activePiece: pieceKey }));
+          return true;
+        } else if (
+          gameState.phase == "displacement" &&
+          gameState.activePiece &&
+          !pieceType
+        ) {
+          return true;
+        }
+      }
+
+      // for tiger
+      if (gameState.currentPlayer === "tiger") {
+        if (pieceType === "tiger") {
+          setGameState((prev) => ({ ...prev, activePiece: pieceKey }));
+          return true;
+        } else if (!pieceType && gameState.activePiece) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    if (isValidSelection(pieceKey, pieceType)) {
+      if (gameState.selectedPiece === pieceKey) {
+        setGameState((prev) => ({
+          ...prev,
+          selectedPiece: null,
+          // highlightedPieces: [],
+        }));
+        console.log(
+          `disselected Piece at (${row}, ${col}) with piece: ${pieceType}`
+        );
+      } else {
+        setGameState((prev) => ({
+          ...prev,
+          selectedPiece: pieceKey,
+          // highlightedPieces: [...prev.highlightedPieces, pieceKey],
+        }));
+        console.log(
+          `selected Piece at (${row}, ${col}) with piece: ${pieceType}`
+        );
       }
     }
-
-    // for tiger
-    if (gameState.currentPlayer === "tiger") {
-      if (pieceType === "tiger") {
-        setGameState((prev) => ({ ...prev, activePiece: pieceKey }));
-        return true;
-      } else if (!pieceType && gameState.activePiece) {
-        return true;
-      }
-    }
-
-    return false;
   };
 
   return (

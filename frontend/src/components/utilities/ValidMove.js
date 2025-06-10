@@ -1,4 +1,4 @@
-const moveConnections = {
+export const moveConnections = {
   // Row 0
   "0-0": ["0-1", "1-0", "1-1"],
   "0-1": ["0-0", "0-2", "1-1"],
@@ -35,7 +35,7 @@ const moveConnections = {
   "4-4": ["3-3", "3-4", "4-3"],
 };
 
-const captureConnections = {
+export const captureConnections = {
   // Row 0
   "0-0": ["0-2", "2-0", "2-2"],
   "0-1": ["0-3", "2-1"],
