@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Piece from "./Piece";
-import { moveConnections, captureConnections } from "./utilities/ValidMove.js";
+import ValidateMove from "./utilities/MoveValidation.js";
 
 const Board = () => {
   const boardSize = 4;
@@ -27,7 +27,7 @@ const Board = () => {
     deadGoatCount: 0,
     // highlightedPieces: [],
     currentPlayer: "goat", // 'goat' or 'tiger'
-    phase: "displacement", // when all goats are spawned it should be changed to 'displacement'
+    phase: "placement", // either placement or displacement
   });
 
   // add useEffect here to update state variables when
@@ -35,6 +35,42 @@ const Board = () => {
   const handlePieceClick = (row, col, pieceType) => {
     const pieceKey = `${row}-${col}`;
     handleSelection(row, col, pieceType);
+
+    // check if the move is valid
+    const fromKey = gameState.activePiece;
+    const toKey = pieceKey;
+    const moveType =
+      ValidateMove(
+        fromKey,
+        toKey,
+        gameState.board[gameState.activePiece],
+        gameState.board
+      ) ||
+      (gameState.phase == "placement" && !gameState.board[pieceKey]
+        ? "place"
+        : "");
+    // const moveType = function () {
+    //   if (
+    //     gameState.phase == "placement" &&
+    //     !gameState.board[gameState.selectedPiece]
+    //   ) {
+    //     return "placement";
+    //   } else {
+    //     return move;
+    //   }
+    // };
+
+    if (moveType) {
+      const message = {
+        moveType: moveType,
+        currentPlayer: gameState.currentPlayer,
+        pieceType: gameState.board[gameState.activePiece], // it's null in placement phase
+        fromKey: fromKey,
+        toKey: toKey,
+      };
+      // if yes get the move data and send to a callback to parent
+      console.log(message);
+    }
   };
 
   const handlePieceHover = (row, col, isEntering) => {
@@ -213,6 +249,7 @@ const Board = () => {
       return false;
     };
 
+    // select/unselect
     if (isValidSelection(pieceKey, pieceType)) {
       if (gameState.selectedPiece === pieceKey) {
         setGameState((prev) => ({

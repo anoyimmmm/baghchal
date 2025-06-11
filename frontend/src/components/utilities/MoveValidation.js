@@ -1,4 +1,4 @@
-export const moveConnections = {
+const moveConnections = {
   // Row 0
   "0-0": ["0-1", "1-0", "1-1"],
   "0-1": ["0-0", "0-2", "1-1"],
@@ -35,7 +35,7 @@ export const moveConnections = {
   "4-4": ["3-3", "3-4", "4-3"],
 };
 
-export const captureConnections = {
+const captureConnections = {
   // Row 0
   "0-0": ["0-2", "2-0", "2-2"],
   "0-1": ["0-3", "2-1"],
@@ -71,3 +71,36 @@ export const captureConnections = {
   "4-3": ["2-3", "4-1"],
   "4-4": ["2-2", "2-4", "4-2"],
 };
+const ValidateMove = (fromKey, toKey, pieceType, GameBoard) => {
+  // console.log(fromKey, toKey, pieceType, GameBoard);
+  if (GameBoard[toKey]) {
+    return null;
+  }
+  if (!fromKey) {
+    return null;
+  }
+  if (moveConnections[fromKey].includes(toKey)) {
+    console.log("displace");
+    return "displace";
+  }
+
+  // for capture moves
+  if (pieceType == "tiger" && captureConnections[fromKey].includes(toKey)) {
+    console.log("capture");
+    return isValidCapture(fromKey, toKey, GameBoard);
+  }
+};
+
+const isValidCapture = (fromKey, toKey, GameBoard) => {
+  const [fromRow, fromCol] = fromKey.split("-").map(Number);
+  const [toRow, toCol] = toKey.split("-").map(Number);
+  const midRow = (fromRow + toRow) / 2;
+  const midCol = (fromCol + toCol) / 2;
+  const midKey = `${midRow}-${midCol}`;
+
+  if (GameBoard[midKey] === "goat") {
+    return "capture";
+  }
+};
+
+export default ValidateMove;
