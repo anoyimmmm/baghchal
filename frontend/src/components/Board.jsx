@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Piece from "./Piece";
 import ValidateMove from "./utilities/MoveValidation.js";
 
-const Board = () => {
+const Board = ({ onMoveSend }) => {
   const boardSize = 4;
   const cellSize = 180;
   const pieceRadius = 40;
@@ -69,7 +69,7 @@ const Board = () => {
         toKey: toKey,
       };
       // if yes get the move data and send to a callback to parent
-      console.log(message);
+      onMoveSend(message);
     }
   };
 
