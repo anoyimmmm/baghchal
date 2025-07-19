@@ -1,13 +1,12 @@
 import Board from "./Board";
 const Game = () => {
   const handleMoveSend = (message) => {
-    // console.log(message);
-    const url = `ws://${window.location.host}/game`;
-    const socket = new WebSocket(url);
+    const wsUrl = import.meta.env.VITE_WS_URL;
+    console.log(wsUrl);
+    const socket = new WebSocket(wsUrl);
     // open a websocket
     socket.addEventListener("open", (event) => {
-      socket.send(message);
-      console.log("message sent");
+      socket.send(JSON.stringify({ message: message }));
     });
 
     socket.addEventListener("message", (event) => {

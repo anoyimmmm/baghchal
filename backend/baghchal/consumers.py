@@ -18,4 +18,5 @@ class GameConsumer(WebsocketConsumer):
         # new_board = process_move(move)
         # print(new_board)
         # echo the message back
-        # self.send(json.dumps(new_board))
+        # self.send(new_board)
+        self.send(json.dumps(move))
