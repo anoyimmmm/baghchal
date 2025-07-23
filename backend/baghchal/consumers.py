@@ -18,7 +18,7 @@ class GameConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
                     "message": {
                         "type": "init",
-                        "board": game_states[self.room_name]
+                        "game_state": game_states[self.room_name]
                     }
                 }))
         
@@ -28,18 +28,27 @@ class GameConsumer(WebsocketConsumer):
         print(f"text data received: {move}")
 
         new_game_state = update_game_state(self.room_name, move)
+
+        if not new_game_state:
+            self.send(text_data=json.dumps({
+                "message": {
+                    "type": "error",
+                    "error": "Invalid move"
+                }
+            }))
+            return
         
         event = {
-            "type" :"send_board",
-            'board': new_game_state
+            "type" :"send_game_state",
+            'game_state': new_game_state
         }
         async_to_sync(self.channel_layer.group_send)(self.room_name, event)
 
-    def send_board(self, event):
+    def send_game_state(self, event):
         self.send(text_data=json.dumps({
             "message":{
                 "type": "update",
-                'board': event['board']
+                'game_state': event['game_state']
             }
             }))
         
