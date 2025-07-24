@@ -72,7 +72,16 @@ const captureConnections = {
   "4-4": ["2-2", "2-4", "4-2"],
 };
 const ValidateMove = (fromKey, toKey, pieceType, GameBoard) => {
-  // console.log(fromKey, toKey, pieceType, GameBoard);
+  // console.log(
+  //   "fromkey",
+  //   fromKey,
+  //   "tokey",
+  //   toKey,
+  //   "piecetype",
+  //   pieceType,
+  //   "gameboard",
+  //   GameBoard
+  // );
   if (GameBoard[toKey]) {
     return null;
   }
@@ -86,7 +95,6 @@ const ValidateMove = (fromKey, toKey, pieceType, GameBoard) => {
 
   // for capture moves
   if (pieceType == "tiger" && captureConnections[fromKey].includes(toKey)) {
-    console.log("capture");
     return isValidCapture(fromKey, toKey, GameBoard);
   }
 };
@@ -99,6 +107,7 @@ const isValidCapture = (fromKey, toKey, GameBoard) => {
   const midKey = `${midRow}-${midCol}`;
 
   if (GameBoard[midKey] === "goat") {
+    console.log("capture");
     return "capture";
   }
 };

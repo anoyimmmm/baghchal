@@ -39,6 +39,7 @@ const Piece = ({
       stroke = "#10b981"; // green
       strokeWidth = 3;
     } else if (isHovered) {
+      strokeWidth = 3;
       fill = "#c7c5c5";
     }
 

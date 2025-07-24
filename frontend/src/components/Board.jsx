@@ -2,31 +2,32 @@ import React, { useState } from "react";
 import Piece from "./Piece";
 import ValidateMove from "./utilities/MoveValidation.js";
 
-const Board = ({ onMoveSend }) => {
+const Board = ({ board, onMoveSend }) => {
   const boardSize = 4;
   const cellSize = 180;
   const pieceRadius = 40;
   const padding = pieceRadius + 1;
   const svgSize = padding * 2 + boardSize * cellSize;
 
-  const [gameState, setGameState] = useState({
-    board: {
-      // tigers at four corners
-      "0-0": "tiger",
-      "0-4": "tiger",
-      "4-0": "tiger",
-      "4-4": "tiger",
-      // goats for demo only
-      "1-1": "goat",
-      "1-3": "goat",
-      "3-1": "goat",
-    },
+  const [boardState, setboardState] = useState({
+    // board: {
+    //   // tigers at four corners
+    //   "0-0": "tiger",
+    //   "0-4": "tiger",
+    //   "4-0": "tiger",
+    //   "4-4": "tiger",
+    //   // goats for demo only
+    //   "1-1": "goat",
+    //   "1-3": "goat",
+    //   "3-1": "goat",
+    // },
+    // board: board,
     selectedPiece: null,
     activePiece: null, // this is the non-null piece clicked before clicking a null piece
     unusedGoat: 24,
     deadGoatCount: 0,
     // highlightedPieces: [],
-    currentPlayer: "goat", // 'goat' or 'tiger'
+    currentPlayer: "tiger", // 'goat' or 'tiger'
     phase: "placement", // either placement or displacement
   });
 
@@ -37,22 +38,19 @@ const Board = ({ onMoveSend }) => {
     handleSelection(row, col, pieceType);
 
     // check if the move is valid
-    const fromKey = gameState.activePiece;
+    const fromKey = boardState.activePiece;
     const toKey = pieceKey;
     const moveType =
-      ValidateMove(
-        fromKey,
-        toKey,
-        gameState.board[gameState.activePiece],
-        gameState.board
-      ) ||
-      (gameState.phase == "placement" && !gameState.board[pieceKey]
+      ValidateMove(fromKey, toKey, board[boardState.activePiece], board) ||
+      (boardState.phase == "placement" &&
+      !board[pieceKey] &&
+      boardState.currentPlayer == "goat"
         ? "place"
         : "");
     // const moveType = function () {
     //   if (
-    //     gameState.phase == "placement" &&
-    //     !gameState.board[gameState.selectedPiece]
+    //     boardState.phase == "placement" &&
+    //     !board[boardState.selectedPiece]
     //   ) {
     //     return "placement";
     //   } else {
@@ -63,11 +61,16 @@ const Board = ({ onMoveSend }) => {
     if (moveType) {
       const message = {
         moveType: moveType,
-        currentPlayer: gameState.currentPlayer,
-        pieceType: gameState.board[gameState.activePiece], // it's null in placement phase
+        currentPlayer: boardState.currentPlayer,
+        pieceType: board[boardState.activePiece], // it's null in placement phase
         fromKey: fromKey,
         toKey: toKey,
       };
+      setboardState((prev) => ({
+        ...prev,
+        selectedPiece: null,
+        activePiece: null,
+      }));
       // if yes get the move data and send to a callback to parent
       onMoveSend(message);
     }
@@ -194,7 +197,7 @@ const Board = ({ onMoveSend }) => {
         const x = padding + col * cellSize;
         const y = padding + row * cellSize;
         const pieceKey = `${row}-${col}`;
-        const pieceType = gameState.board[pieceKey] || null;
+        const pieceType = board[pieceKey] || null;
         pieces.push(
           <Piece
             key={pieceKey}
@@ -204,8 +207,8 @@ const Board = ({ onMoveSend }) => {
             col={col}
             radius={pieceRadius}
             pieceType={pieceType}
-            isSelected={gameState.selectedPiece === pieceKey}
-            // isHighlighted={gameState.highlightedPieces.includes(pieceKey)}
+            isSelected={boardState.selectedPiece === pieceKey}
+            // isHighlighted={boardState.highlightedPieces.includes(pieceKey)}
             onClick={handlePieceClick}
             onHover={handlePieceHover}
           />
@@ -221,15 +224,15 @@ const Board = ({ onMoveSend }) => {
 
     const isValidSelection = (pieceKey, pieceType) => {
       // for goat
-      if (gameState.currentPlayer === "goat") {
-        if (gameState.phase === "placement" && pieceType === null) {
+      if (boardState.currentPlayer === "goat") {
+        if (boardState.phase === "placement" && pieceType === null) {
           return true;
-        } else if (gameState.phase === "displacement" && pieceType == "goat") {
-          setGameState((prev) => ({ ...prev, activePiece: pieceKey }));
+        } else if (boardState.phase === "displacement" && pieceType == "goat") {
+          setboardState((prev) => ({ ...prev, activePiece: pieceKey }));
           return true;
         } else if (
-          gameState.phase == "displacement" &&
-          gameState.activePiece &&
+          boardState.phase == "displacement" &&
+          board[boardState.activePiece] === "goat" &&
           !pieceType
         ) {
           return true;
@@ -237,11 +240,11 @@ const Board = ({ onMoveSend }) => {
       }
 
       // for tiger
-      if (gameState.currentPlayer === "tiger") {
+      if (boardState.currentPlayer === "tiger") {
         if (pieceType === "tiger") {
-          setGameState((prev) => ({ ...prev, activePiece: pieceKey }));
+          setboardState((prev) => ({ ...prev, activePiece: pieceKey }));
           return true;
-        } else if (!pieceType && gameState.activePiece) {
+        } else if (!pieceType && board[boardState.activePiece] === "tiger") {
           return true;
         }
       }
@@ -251,17 +254,18 @@ const Board = ({ onMoveSend }) => {
 
     // select/unselect
     if (isValidSelection(pieceKey, pieceType)) {
-      if (gameState.selectedPiece === pieceKey) {
-        setGameState((prev) => ({
+      if (boardState.selectedPiece === pieceKey) {
+        setboardState((prev) => ({
           ...prev,
           selectedPiece: null,
+          activePiece: null,
           // highlightedPieces: [],
         }));
         console.log(
           `disselected Piece at (${row}, ${col}) with piece: ${pieceType}`
         );
       } else {
-        setGameState((prev) => ({
+        setboardState((prev) => ({
           ...prev,
           selectedPiece: pieceKey,
           // highlightedPieces: [...prev.highlightedPieces, pieceKey],
