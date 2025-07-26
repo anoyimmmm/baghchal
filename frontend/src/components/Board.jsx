@@ -1,19 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Piece from "./Piece";
 import ValidateMove from "./utilities/MoveValidation.js";
 
 const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
+  const containerRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 800, height: 800 });
+
   const boardSize = 4;
-  const cellSize = 180;
-  const pieceRadius = 40;
-  const padding = pieceRadius + 1;
-  const svgSize = padding * 2 + boardSize * cellSize;
+
+  // Calculate responsive dimensions
+  const containerPadding = 0; // Fixed padding for the border container
+  const availableSize =
+    Math.min(dimensions.width, dimensions.height) - containerPadding * 2;
+  const cellSize = availableSize / 5; // 4 cells + 1.5 for internal padding
+  const pieceRadius = cellSize * 0.25; // 20% of cell size
+  const padding = cellSize / 2; // Internal SVG padding
+  const svgSize = availableSize;
 
   const [boardState, setboardState] = useState({
     selectedPiece: null,
-    activePiece: null, // this is the non-null piece clicked before clicking a null piece
-    // highlightedPieces: [],
+    activePiece: null,
   });
+
+  // Handle window resize and container size changes
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const container = containerRef.current;
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+
+        // Calculate the maximum size that fits in the container while maintaining square aspect ratio
+        const maxSize = Math.min(
+          containerWidth,
+          containerHeight,
+          Math.min(window.innerWidth, window.innerHeight)
+        );
+
+        setDimensions({
+          width: maxSize,
+          height: maxSize,
+        });
+      }
+    };
+
+    // Initial calculation
+    updateDimensions();
+
+    // Add resize listener
+    window.addEventListener("resize", updateDimensions);
+
+    // Use ResizeObserver for container size changes if available
+    let resizeObserver;
+    if (window.ResizeObserver && containerRef.current) {
+      resizeObserver = new ResizeObserver(updateDimensions);
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      window.removeEventListener("resize", updateDimensions);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+    };
+  }, []);
 
   // handle piece clicks
   const handlePieceClick = (row, col, pieceType) => {
@@ -27,13 +77,12 @@ const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
       (phase == "placement" && !board[pieceKey] && currentPlayer == "goat"
         ? "place"
         : "");
-    // console.log(phase, !board[pieceKey], currentPlayer);
 
     if (moveType) {
       const message = {
         moveType: moveType,
         currentPlayer: currentPlayer,
-        pieceType: board[boardState.activePiece], // it's null in placement phase
+        pieceType: board[boardState.activePiece],
         fromKey: fromKey,
         toKey: toKey,
       };
@@ -42,16 +91,13 @@ const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
         selectedPiece: null,
         activePiece: null,
       }));
-      onMoveSend(message); // send move to server
+      onMoveSend(message);
     }
   };
 
-  // handle hover (currently unused, reserved for future use)
+  // handle hover
   const handlePieceHover = (row, col, isEntering) => {
-    console
-      .log
-      // `${isEntering ? "Entering" : "Leaving"} Piece at (${row}, ${col})`
-      ();
+    console.log();
   };
 
   // draw grid lines
@@ -67,7 +113,7 @@ const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
           x2={padding + boardSize * cellSize}
           y2={y}
           className="stroke-gray-400"
-          style={{ strokeWidth: 1.5 }}
+          style={{ strokeWidth: Math.max(1, cellSize * 0.0075) }}
         />
       );
     }
@@ -80,7 +126,8 @@ const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
           y1={padding}
           x2={x}
           y2={padding + boardSize * cellSize}
-          className="stroke-gray-500 stroke-[1.5]"
+          className="stroke-gray-500"
+          style={{ strokeWidth: Math.max(1, cellSize * 0.0075) }}
         />
       );
     }
@@ -97,6 +144,8 @@ const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
     const centerX = padding + 2 * cellSize;
     const centerY = padding + 2 * cellSize;
 
+    const strokeWidth = Math.max(1, cellSize * 0.0075);
+
     // main diagonals
     lines.push(
       <line
@@ -105,7 +154,8 @@ const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
         y1={startY}
         x2={endX}
         y2={endY}
-        className="stroke-gray-500 stroke-[1.5]"
+        className="stroke-gray-500"
+        style={{ strokeWidth }}
       />
     );
     lines.push(
@@ -115,7 +165,8 @@ const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
         y1={startY}
         x2={startX}
         y2={endY}
-        className="stroke-gray-500 stroke-[1.5]"
+        className="stroke-gray-500"
+        style={{ strokeWidth }}
       />
     );
 
@@ -135,7 +186,8 @@ const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
           y1={quad.y1}
           x2={quad.x2}
           y2={quad.y2}
-          className="stroke-gray-500 stroke-[1.5]"
+          className="stroke-gray-500"
+          style={{ strokeWidth }}
         />
       );
       lines.push(
@@ -145,7 +197,8 @@ const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
           y1={quad.y1}
           x2={quad.x1}
           y2={quad.y2}
-          className="stroke-gray-500 stroke-[1.5]"
+          className="stroke-gray-500"
+          style={{ strokeWidth }}
         />
       );
     });
@@ -182,7 +235,7 @@ const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
     return pieces;
   };
 
-  // handle selection logic (clicking same piece twice deselects, etc.)
+  // handle selection logic
   const handleSelection = (row, col, pieceType) => {
     const pieceKey = `${row}-${col}`;
 
@@ -237,14 +290,20 @@ const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white p-5">
-      <div className="bg-white border-2 border-gray-600 rounded-lg p-5 shadow-lg">
-        <svg width={svgSize} height={svgSize} className="bg-white">
-          <g>{renderGridLines()}</g>
-          <g>{renderDiagonalLines()}</g>
-          <g>{renderPieces()}</g>
-        </svg>
-      </div>
+    <div
+      ref={containerRef}
+      className="border-3 border-gray-400 rounded-lg shadow-lg aspect-square h-auto w-auto overflow-hidden"
+    >
+      <svg
+        width={svgSize}
+        height={svgSize}
+        className="bg-white"
+        viewBox={`0 0 ${svgSize} ${svgSize}`}
+      >
+        <g>{renderGridLines()}</g>
+        <g>{renderDiagonalLines()}</g>
+        <g>{renderPieces()}</g>
+      </svg>
     </div>
   );
 };

@@ -32,10 +32,8 @@ const Game = () => {
 
     socketRef.current.onmessage = (event) => {
       const new_game_state = JSON.parse(event.data).message.game_state;
-      // console.log(new_game_state);
       setGameState(new_game_state);
       if (new_game_state.status !== "ongoing") {
-        console.log("hello world");
         setWinner(new_game_state.winner);
         setModalOpen(true);
       }
@@ -58,25 +56,149 @@ const Game = () => {
   };
 
   return (
-    <>
-      {gameState && (
-        <Board
-          board={gameState.board}
-          currentPlayer={gameState.currentPlayer} // or gameState.currentPlayer if your backend uses that
-          phase={gameState.phase} // or gameState.phase if your backend uses that
-          onMoveSend={handleMoveSend}
-        />
-      )}
+    <div className="flex h-full w-full flex-row justify-evenly">
+      <div className="flex flex-col  justify-center overflow-hidden px-10 aspect-square ">
+        player 1
+        {gameState && (
+          <Board
+            board={gameState.board}
+            currentPlayer={gameState.currentPlayer} // or gameState.currentPlayer if your backend uses that
+            phase={gameState.phase} // or gameState.phase if your backend uses that
+            onMoveSend={handleMoveSend}
+          />
+        )}
+        player 2
+      </div>
+      <GameStatus gameState={gameState} />
       <WinnerModal
         winner={winner}
         isOpen={modalOpen}
-        // onclose={() => setModalOpen(false)}
+        onclose={() => setModalOpen(false)}
       />
-    </>
+    </div>
   );
 };
 
 export default Game;
+
+const GameStatus = ({ gameState, moveHistory }) => {
+  return (
+    <div className=" bg-white border-l border-gray-300 p-4 flex flex-col h-full w-80">
+      {/* Game Status */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-gray-800 mb-3">
+          Game Status
+        </h3>
+        <div className="space-y-2">
+          <div className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded">
+            <span className="text-gray-600">Current Turn:</span>
+            <span className="font-semibold capitalize text-gray-800">
+              {gameState?.currentPlayer || "goat"}
+            </span>
+          </div>
+          <div className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded">
+            <span className="text-gray-600">Phase:</span>
+            <span className="font-semibold capitalize text-gray-800">
+              {gameState?.phase || "placement"}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Piece Counts */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-gray-800 mb-3">
+          Piece Status
+        </h3>
+        <div className="space-y-2">
+          <div className="flex justify-between items-center py-2 px-3 bg-amber-50 rounded">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-amber-500 rounded-full"></div>
+              <span className="text-gray-600">Tigers on Board:</span>
+            </div>
+            <span className="font-semibold text-gray-800">4</span>
+          </div>
+          <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+              <span className="text-gray-600">Goats Remaining:</span>
+            </div>
+            <span className="font-semibold text-gray-800">
+              {gameState?.unusedGoat || 20}
+            </span>
+          </div>
+          <div className="flex justify-between items-center py-2 px-3 bg-red-50 rounded">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+              <span className="text-gray-600">Goats Captured:</span>
+            </div>
+            <span className="font-semibold text-gray-800">
+              {gameState?.deadGoatCount || 0}
+            </span>
+          </div>
+          <div className="flex justify-between items-center py-2 px-3 bg-blue-50 rounded">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+              <span className="text-gray-600">Goats on Board:</span>
+            </div>
+            <span className="font-semibold text-gray-800">
+              {20 -
+                (gameState?.unusedGoat || 20) -
+                (gameState?.deadGoatCount || 0)}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Move History */}
+      <div className="flex-1">
+        <h3 className="text-lg font-semibold text-gray-800 mb-3">
+          Move History
+        </h3>
+        <div className="bg-gray-50 rounded p-3 h-64 overflow-y-auto">
+          {!moveHistory || moveHistory.length === 0 ? (
+            <p className="text-gray-500 text-sm text-center mt-8">
+              No moves yet
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {moveHistory.map((move, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between py-1 px-2 bg-white rounded text-sm"
+                >
+                  <span className="font-medium text-gray-600">
+                    #{index + 1}
+                  </span>
+                  <span className="capitalize text-gray-800">
+                    {move.player}
+                  </span>
+                  <span className="text-gray-600">{move.type}</span>
+                  <span className="text-gray-500">
+                    {move.from} → {move.to}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Game Rules (compact) */}
+      <div className="mt-4">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          Quick Rules
+        </h3>
+        <div className="text-xs text-gray-600 space-y-1 bg-gray-50 p-3 rounded">
+          <p>• Tigers start at four corners</p>
+          <p>• Goats place first (20 pieces), then move</p>
+          <p>• Tigers win by capturing 5 goats</p>
+          <p>• Goats win by blocking all tigers</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 function WinnerModal({ winner, isOpen, onClose }) {
   if (!isOpen) return null;

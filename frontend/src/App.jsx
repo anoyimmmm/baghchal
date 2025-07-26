@@ -1,11 +1,25 @@
 import { useState } from "react";
-// import reactLogo from "./assets/react.svg";
-// import viteLogo from "/vite.svg";
 import "./App.css";
 import Game from "./components/Game";
+import Layout from "./components/Layout";
+// import home from
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import UserProfile from "./routes/UserProfile";
+import Home from "./routes/Home";
 
 function App() {
-  return <Game />;
+  // return <Game />;
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="user" element={<UserProfile />} />
+          <Route path="game" element={<Game />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
