@@ -205,7 +205,7 @@ function WinnerModal({ winner, isOpen, onClose }) {
 
   return (
     <div
-      className="fixed inset-0  flex items-center justify-center z-50
+      className="fixed inset-0  flex items-center justify-center z-50 bg-gray-200/70
 "
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
