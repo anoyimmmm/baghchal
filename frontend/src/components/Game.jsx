@@ -7,7 +7,6 @@ const initialGameState = {
     "4-0": "tiger",
     "4-4": "tiger",
   },
-  status: "ongoing",
   currentPlayer: "goat",
   phase: "placement",
   unusedGoat: 20,
