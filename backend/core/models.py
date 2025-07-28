@@ -13,5 +13,8 @@ class User(AbstractUser):
             return 0
         return round((self.wins / self.games_played) * 100, 1)
     
+    def display_name(self):
+        return self.first_name
+    
     # later on add display name as fname+lname as a property
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 const AuthModal = ({ isOpen, onClose }) => {
   const [mode, setMode] = useState("login");
@@ -41,24 +42,25 @@ const AuthModal = ({ isOpen, onClose }) => {
         data.append("first_name", formData.displayName);
         if (formData.avatar) data.append("avatar", formData.avatar);
 
-        await axios.post("/api/signup/", data, {
+        await axios.post("http://localhost:8000/signup/", data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
+
         setMessage("Signup successful! You can now log in.");
         setMode("login");
       } else {
-        const res = await axios.post("/api/login/", {
+        const response = await axios.post("http://localhost:8000/login/", {
           username: formData.username,
           password: formData.password,
         });
         setMessage("Login successful!");
+        console.log(response.data.user_data);
         // save token, navigate, etc.
         onClose();
       }
-    } catch (err) {
-      setMessage(
-        "Error: " + (err.response?.data?.detail || "Something went wrong")
-      );
+    } catch (error) {
+      const errorMsg = "Error: " + error.response?.data?.error;
+      setMessage(errorMsg);
     } finally {
       setLoading(false);
     }
