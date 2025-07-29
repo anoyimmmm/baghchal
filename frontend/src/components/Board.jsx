@@ -1,68 +1,88 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Piece from "./Piece";
 import ValidateMove from "./utilities/MoveValidation.js";
 
-const Board = ({ board, onMoveSend }) => {
+const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
+  const containerRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 800, height: 800 });
+
   const boardSize = 4;
-  const cellSize = 180;
-  const pieceRadius = 40;
-  const padding = pieceRadius + 1;
-  const svgSize = padding * 2 + boardSize * cellSize;
+
+  // Calculate responsive dimensions
+  const containerPadding = 0; // Fixed padding for the border container
+  const availableSize =
+    Math.min(dimensions.width, dimensions.height) - containerPadding * 2;
+  const cellSize = availableSize / 5; // 4 cells + 1.5 for internal padding
+  const pieceRadius = cellSize * 0.25; // 20% of cell size
+  const padding = cellSize / 2; // Internal SVG padding
+  const svgSize = availableSize;
 
   const [boardState, setboardState] = useState({
-    // board: {
-    //   // tigers at four corners
-    //   "0-0": "tiger",
-    //   "0-4": "tiger",
-    //   "4-0": "tiger",
-    //   "4-4": "tiger",
-    //   // goats for demo only
-    //   "1-1": "goat",
-    //   "1-3": "goat",
-    //   "3-1": "goat",
-    // },
-    // board: board,
     selectedPiece: null,
-    activePiece: null, // this is the non-null piece clicked before clicking a null piece
-    unusedGoat: 24,
-    deadGoatCount: 0,
-    // highlightedPieces: [],
-    currentPlayer: "tiger", // 'goat' or 'tiger'
-    phase: "placement", // either placement or displacement
+    activePiece: null,
   });
 
-  // add useEffect here to update state variables when
+  // Handle window resize and container size changes
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const container = containerRef.current;
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
 
+        // Calculate the maximum size that fits in the container while maintaining square aspect ratio
+        const maxSize = Math.min(
+          containerWidth,
+          containerHeight,
+          Math.min(window.innerWidth, window.innerHeight)
+        );
+
+        setDimensions({
+          width: maxSize,
+          height: maxSize,
+        });
+      }
+    };
+
+    // Initial calculation
+    updateDimensions();
+
+    // Add resize listener
+    window.addEventListener("resize", updateDimensions);
+
+    // Use ResizeObserver for container size changes if available
+    let resizeObserver;
+    if (window.ResizeObserver && containerRef.current) {
+      resizeObserver = new ResizeObserver(updateDimensions);
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      window.removeEventListener("resize", updateDimensions);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+    };
+  }, []);
+
+  // handle piece clicks
   const handlePieceClick = (row, col, pieceType) => {
     const pieceKey = `${row}-${col}`;
     handleSelection(row, col, pieceType);
 
-    // check if the move is valid
     const fromKey = boardState.activePiece;
     const toKey = pieceKey;
     const moveType =
       ValidateMove(fromKey, toKey, board[boardState.activePiece], board) ||
-      (boardState.phase == "placement" &&
-      !board[pieceKey] &&
-      boardState.currentPlayer == "goat"
+      (phase == "placement" && !board[pieceKey] && currentPlayer == "goat"
         ? "place"
         : "");
-    // const moveType = function () {
-    //   if (
-    //     boardState.phase == "placement" &&
-    //     !board[boardState.selectedPiece]
-    //   ) {
-    //     return "placement";
-    //   } else {
-    //     return move;
-    //   }
-    // };
 
     if (moveType) {
-      const message = {
+      const move = {
         moveType: moveType,
-        currentPlayer: boardState.currentPlayer,
-        pieceType: board[boardState.activePiece], // it's null in placement phase
+        currentPlayer: currentPlayer,
+        pieceType: board[boardState.activePiece],
         fromKey: fromKey,
         toKey: toKey,
       };
@@ -71,21 +91,18 @@ const Board = ({ board, onMoveSend }) => {
         selectedPiece: null,
         activePiece: null,
       }));
-      // if yes get the move data and send to a callback to parent
-      onMoveSend(message);
+      onMoveSend(move);
     }
   };
 
+  // handle hover
   const handlePieceHover = (row, col, isEntering) => {
-    // console.log(`${isEntering ? "Entering" : "Leaving"} Piece at (${row}, ${col})`);
-    // if the player and Piece type are same then hghlight the border with green
+    console.log();
   };
 
-  // Generate grid lines (horizontal and vertical)
+  // draw grid lines
   const renderGridLines = () => {
     const lines = [];
-
-    // Horizontal lines
     for (let row = 0; row <= boardSize; row++) {
       const y = padding + row * cellSize;
       lines.push(
@@ -96,12 +113,10 @@ const Board = ({ board, onMoveSend }) => {
           x2={padding + boardSize * cellSize}
           y2={y}
           className="stroke-gray-400"
-          style={{ strokeWidth: 1.5 }}
+          style={{ strokeWidth: Math.max(1, cellSize * 0.0075) }}
         />
       );
     }
-
-    // Vertical lines
     for (let col = 0; col <= boardSize; col++) {
       const x = padding + col * cellSize;
       lines.push(
@@ -111,15 +126,15 @@ const Board = ({ board, onMoveSend }) => {
           y1={padding}
           x2={x}
           y2={padding + boardSize * cellSize}
-          className="stroke-gray-500 stroke-[1.5]"
+          className="stroke-gray-500"
+          style={{ strokeWidth: Math.max(1, cellSize * 0.0075) }}
         />
       );
     }
-
     return lines;
   };
 
-  // Generate diagonal lines
+  // draw diagonals
   const renderDiagonalLines = () => {
     const lines = [];
     const startX = padding;
@@ -129,7 +144,9 @@ const Board = ({ board, onMoveSend }) => {
     const centerX = padding + 2 * cellSize;
     const centerY = padding + 2 * cellSize;
 
-    // Main diagonals (full board)
+    const strokeWidth = Math.max(1, cellSize * 0.0075);
+
+    // main diagonals
     lines.push(
       <line
         key="main-diag-1"
@@ -137,10 +154,10 @@ const Board = ({ board, onMoveSend }) => {
         y1={startY}
         x2={endX}
         y2={endY}
-        className="stroke-gray-500 stroke-[1.5]"
+        className="stroke-gray-500"
+        style={{ strokeWidth }}
       />
     );
-
     lines.push(
       <line
         key="main-diag-2"
@@ -148,20 +165,20 @@ const Board = ({ board, onMoveSend }) => {
         y1={startY}
         x2={startX}
         y2={endY}
-        className="stroke-gray-500 stroke-[1.5]"
+        className="stroke-gray-500"
+        style={{ strokeWidth }}
       />
     );
 
-    // Quadrant diagonals
+    // quadrant diagonals
     const quadrants = [
-      { x1: startX, y1: startY, x2: centerX, y2: centerY }, // Top-left
-      { x1: centerX, y1: startY, x2: endX, y2: centerY }, // Top-right
-      { x1: startX, y1: centerY, x2: centerX, y2: endY }, // Bottom-left
-      { x1: centerX, y1: centerY, x2: endX, y2: endY }, // Bottom-right
+      { x1: startX, y1: startY, x2: centerX, y2: centerY },
+      { x1: centerX, y1: startY, x2: endX, y2: centerY },
+      { x1: startX, y1: centerY, x2: centerX, y2: endY },
+      { x1: centerX, y1: centerY, x2: endX, y2: endY },
     ];
 
     quadrants.forEach((quad, index) => {
-      // Diagonal from top-left to bottom-right of quadrant
       lines.push(
         <line
           key={`quad-diag-1-${index}`}
@@ -169,11 +186,10 @@ const Board = ({ board, onMoveSend }) => {
           y1={quad.y1}
           x2={quad.x2}
           y2={quad.y2}
-          className="stroke-gray-500 stroke-[1.5]"
+          className="stroke-gray-500"
+          style={{ strokeWidth }}
         />
       );
-
-      // Diagonal from top-right to bottom-left of quadrant
       lines.push(
         <line
           key={`quad-diag-2-${index}`}
@@ -181,7 +197,8 @@ const Board = ({ board, onMoveSend }) => {
           y1={quad.y1}
           x2={quad.x1}
           y2={quad.y2}
-          className="stroke-gray-500 stroke-[1.5]"
+          className="stroke-gray-500"
+          style={{ strokeWidth }}
         />
       );
     });
@@ -189,7 +206,7 @@ const Board = ({ board, onMoveSend }) => {
     return lines;
   };
 
-  // Generate intersection points
+  // render all the pieces on board
   const renderPieces = () => {
     const pieces = [];
     for (let row = 0; row <= boardSize; row++) {
@@ -198,6 +215,7 @@ const Board = ({ board, onMoveSend }) => {
         const y = padding + row * cellSize;
         const pieceKey = `${row}-${col}`;
         const pieceType = board[pieceKey] || null;
+
         pieces.push(
           <Piece
             key={pieceKey}
@@ -208,39 +226,37 @@ const Board = ({ board, onMoveSend }) => {
             radius={pieceRadius}
             pieceType={pieceType}
             isSelected={boardState.selectedPiece === pieceKey}
-            // isHighlighted={boardState.highlightedPieces.includes(pieceKey)}
             onClick={handlePieceClick}
             onHover={handlePieceHover}
           />
         );
       }
     }
-
     return pieces;
   };
 
+  // handle selection logic
   const handleSelection = (row, col, pieceType) => {
     const pieceKey = `${row}-${col}`;
 
     const isValidSelection = (pieceKey, pieceType) => {
-      // for goat
-      if (boardState.currentPlayer === "goat") {
-        if (boardState.phase === "placement" && pieceType === null) {
+      // goat logic
+      if (currentPlayer === "goat") {
+        if (phase === "placement" && pieceType === null) {
           return true;
-        } else if (boardState.phase === "displacement" && pieceType == "goat") {
+        } else if (phase === "displacement" && pieceType == "goat") {
           setboardState((prev) => ({ ...prev, activePiece: pieceKey }));
           return true;
         } else if (
-          boardState.phase == "displacement" &&
+          phase == "displacement" &&
           board[boardState.activePiece] === "goat" &&
           !pieceType
         ) {
           return true;
         }
       }
-
-      // for tiger
-      if (boardState.currentPlayer === "tiger") {
+      // tiger logic
+      if (currentPlayer === "tiger") {
         if (pieceType === "tiger") {
           setboardState((prev) => ({ ...prev, activePiece: pieceKey }));
           return true;
@@ -248,18 +264,15 @@ const Board = ({ board, onMoveSend }) => {
           return true;
         }
       }
-
       return false;
     };
 
-    // select/unselect
     if (isValidSelection(pieceKey, pieceType)) {
       if (boardState.selectedPiece === pieceKey) {
         setboardState((prev) => ({
           ...prev,
           selectedPiece: null,
           activePiece: null,
-          // highlightedPieces: [],
         }));
         console.log(
           `disselected Piece at (${row}, ${col}) with piece: ${pieceType}`
@@ -268,7 +281,6 @@ const Board = ({ board, onMoveSend }) => {
         setboardState((prev) => ({
           ...prev,
           selectedPiece: pieceKey,
-          // highlightedPieces: [...prev.highlightedPieces, pieceKey],
         }));
         console.log(
           `selected Piece at (${row}, ${col}) with piece: ${pieceType}`
@@ -278,23 +290,20 @@ const Board = ({ board, onMoveSend }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white p-5">
-      {/* <h1 className="text-3xl font-bold text-gray-800 mb-8">Bagh Chal</h1> */}
-
-      <div className="bg-white border-2 border-gray-600 rounded-lg p-5 shadow-lg">
-        <svg width={svgSize} height={svgSize} className="bg-white">
-          <g>{renderGridLines()}</g>
-
-          <g>{renderDiagonalLines()}</g>
-
-          <g>{renderPieces()}</g>
-        </svg>
-      </div>
-
-      {/* <div className="mt-4 text-center text-gray-600">
-        <p className="text-sm">Traditional Nepali Board Game</p>
-        <p className="text-xs">25 Points • 4 Tigers vs 20 Goats</p>
-      </div> */}
+    <div
+      ref={containerRef}
+      className="border-3 border-gray-400 rounded-lg shadow-lg aspect-square h-auto w-auto overflow-hidden"
+    >
+      <svg
+        width={svgSize}
+        height={svgSize}
+        className="bg-white"
+        viewBox={`0 0 ${svgSize} ${svgSize}`}
+      >
+        <g>{renderGridLines()}</g>
+        <g>{renderDiagonalLines()}</g>
+        <g>{renderPieces()}</g>
+      </svg>
     </div>
   );
 };
