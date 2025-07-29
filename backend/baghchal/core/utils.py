@@ -14,7 +14,7 @@ def get_initial_game_state():
         "phase": "placement",  # can be displacement',  'placement
         "unusedGoat": 20,
         "deadGoatCount": 0,
-        "status": "ongoing",   # can be 'ongoing', 'goat_won', 'tiger_won'
+        "status": "waiting",   # can be 'waiting', 'ongoing', 'over'
         "winner": None
     }
 
@@ -84,7 +84,7 @@ def check_game_over(game_state):
 
     # Tiger win condition
     if dead_goats >= 5:
-        game_state["status"] = "tiger_won"
+        game_state["status"] = "over"
         game_state["winner"] = "tiger"
         print("tiger won!!!")
         return 
@@ -92,7 +92,7 @@ def check_game_over(game_state):
     # Goat win condition
     tigers = [position for position, piece in board.items() if piece == "tiger"]
     if all(is_blocked(pos, board) for pos in tigers):
-        game_state["status"] = "goat_won"
+        game_state["status"] = "over"
         game_state["winner"] = "goat"
         print("goat won!!!")
         return True

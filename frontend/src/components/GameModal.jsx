@@ -1,31 +1,68 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { useWebSocket } from "../context/WebSocketContext";
 
 function GameModal({ mode, isOpen, onClose }) {
   if (!isOpen) return null;
-  //todo: if the user is not logged in redirect to login/signup
 
-  const generateGameId = () => {
-    // generate a unique uuid for the game
-    return crypto.randomUUID();
-  };
-
+  const { connect } = useWebSocket();
+  const { auth, setAuth } = useContext(AuthContext);
   const [gameId, setGameId] = useState("");
   const [joinId, setJoinId] = useState("");
+  const [playerRole, setPlayerRole] = useState("tiger");
+
+  const connectToGame = (gameId, mode, role) => {
+    const params = new URLSearchParams({
+      game_id: gameId,
+      mode: mode,
+      role: role,
+      user_id: auth.user?.id || "",
+    });
+
+    const wsUrl = `ws://localhost:8000/ws/game/?${params}`;
+    console.log(wsUrl);
+    connect(wsUrl);
+  };
+
+  const generateGameId = () => {
+    return crypto.randomUUID();
+  };
 
   useEffect(() => {
     if (mode === "create") {
       setGameId(generateGameId());
+    } else if (mode === "quick") {
+      handleQuick();
     }
   }, [mode]);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(gameId);
-    alert("Game ID copied!");
+  const handleCopy = async (event) => {
+    try {
+      await navigator.clipboard.writeText(gameId);
+      const button = event.target;
+      const originalText = button.textContent;
+      button.textContent = "Copied!";
+      setTimeout(() => {
+        button.textContent = originalText;
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+      setError("Failed to copy to clipboard");
+    }
+  };
+
+  const handleCreate = () => {
+    connectToGame(gameId, "create", playerRole);
   };
 
   const handleJoin = () => {
     console.log("Joining game:", joinId);
-    // add actual navigation/join logic here
+    connectToGame(joinId.trim(), "join", playerRole);
+  };
+
+  const handleQuick = () => {
+    console.log("Searching for quick game");
+    connectToGame("", "quick", playerRole);
   };
 
   return (
@@ -50,8 +87,19 @@ function GameModal({ mode, isOpen, onClose }) {
                 Copy
               </button>
             </div>
+            <label className="block mb-2 text-sm text-white">
+              Choose your role:
+            </label>
+            <select
+              value={playerRole}
+              onChange={(e) => setPlayerRole(e.target.value)}
+              className="w-full p-2 mb-4 bg-gray-800 text-white rounded"
+            >
+              <option value="tiger">Tiger</option>
+              <option value="goat">Goat</option>
+            </select>
             <button
-              onClick={handleJoin}
+              onClick={handleCreate}
               className="bg-white text-gray-800  my-2 px-4 py-2 rounded w-full hover:bg-gray-300"
             >
               Create

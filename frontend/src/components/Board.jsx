@@ -79,7 +79,7 @@ const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
         : "");
 
     if (moveType) {
-      const message = {
+      const move = {
         moveType: moveType,
         currentPlayer: currentPlayer,
         pieceType: board[boardState.activePiece],
@@ -91,7 +91,7 @@ const Board = ({ board, currentPlayer, phase, onMoveSend }) => {
         selectedPiece: null,
         activePiece: null,
       }));
-      onMoveSend(message);
+      onMoveSend(move);
     }
   };
 

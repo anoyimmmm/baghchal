@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, use } from "react";
+import { useWebSocket } from "../context/WebSocketContext";
 import Board from "./Board";
 const initialGameState = {
   board: {
@@ -11,47 +12,27 @@ const initialGameState = {
   phase: "placement",
   unusedGoat: 20,
   deadGoatCount: 0,
-  status: "ongoing",
+  status: "waiting",
   winner: null,
 };
 
 const Game = () => {
-  const socketRef = useRef();
-  const [gameState, setGameState] = useState();
+  const { send, gameState } = useWebSocket();
   const [modalOpen, setModalOpen] = useState(false);
   const [winner, setWinner] = useState("");
 
   useEffect(() => {
-    const wsUrl = import.meta.env.VITE_WS_URL;
-    socketRef.current = new WebSocket(wsUrl);
-
-    socketRef.current.onopen = () => {
-      console.log("websocket connected");
-    };
-
-    socketRef.current.onmessage = (event) => {
-      const new_game_state = JSON.parse(event.data).message.game_state;
-      setGameState(new_game_state);
-      if (new_game_state.status !== "ongoing") {
-        setWinner(new_game_state.winner);
-        setModalOpen(true);
-      }
-    };
-
-    socketRef.current.onclose = () => {
-      console.log("websocket closed");
-    };
-
-    return () => {
-      socketRef.current.close();
-    };
-  }, []); // 🧠 Don't forget the closing ] here
-
-  const handleMoveSend = (message) => {
-    if (socketRef.current.readyState === WebSocket.OPEN) {
-      console.log("sending move ", message);
-      socketRef.current.send(JSON.stringify({ message }));
+    // const wsUrl = import.meta.env.VITE_WS_URL;
+    if (gameState.status === "over") {
+      setWinner(gameState.winner);
+      setModalOpen(true);
     }
+  }, [gameState]);
+
+  const handleMoveSend = (move) => {
+    console.log("sending move ", move);
+    console.log("stringified ", JSON.stringify(move));
+    send(JSON.stringify(move));
   };
 
   return (
@@ -72,7 +53,7 @@ const Game = () => {
       <WinnerModal
         winner={winner}
         isOpen={modalOpen}
-        onclose={() => setModalOpen(false)}
+        onClose={() => setModalOpen(false)}
       />
     </div>
   );
