@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Outlet } from "react-router-dom";
 import AuthModal from "./AuthModal";
+import { AuthContext } from "../context/AuthContext";
 
 function Layout() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -24,35 +25,32 @@ function Layout() {
 export default Layout;
 
 function SideBar({ setAuthModalOpen }) {
-  const [user, setUser] = useState("USER1");
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const { auth, setAuth } = useContext(AuthContext);
 
   const handleLoginToggle = () => {
-    if (isLoggedIn) {
-      setUser("Guest");
-      setIsLoggedIn(false);
+    if (!auth.user) {
+      setAuthModalOpen(true);
     } else {
-      setUser("USER1");
-      setIsLoggedIn(true);
+      setAuth({ isAuthenticated: false });
     }
-    <div className="text-gray-800 mb-5 font-medium">{user}</div>;
+
+    // <div className="text-gray-800 mb-5 font-medium">{auth.user}</div>;
   };
 
   return (
     <div className="h-full w-50 bg-white border-r  border-gray-300 p-8">
       <div className="text-center mb-8 ">
         <div className="w-15 h-15 bg-gray-300 rounded-full mx-auto mb-4 flex items-center justify-center text-gray-600 text-2xl font-medium">
-          U
+          {auth.user?.avatar || "pp"}
         </div>
-        <div className="text-gray-800 mb-5 font-medium">{user}</div>
+        <div className="text-gray-800 mb-5 font-bold">
+          {auth.user?.username || "GUEST"}
+        </div>
         <button
-          onClick={() => {
-            setAuthModalOpen(true);
-            // handleLoginToggle();
-          }}
+          onClick={() => handleLoginToggle()}
           className="bg-gray-800 text-white border-none px-4 py-2 rounded cursor-pointer hover:bg-gray-700 transition-colors"
         >
-          {isLoggedIn ? "logout" : "login"}
+          {auth.isAuthenticated ? "logout" : "login"}
         </button>
       </div>
     </div>

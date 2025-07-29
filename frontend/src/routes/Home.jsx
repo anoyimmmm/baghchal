@@ -9,7 +9,7 @@ import { useOutletContext } from "react-router-dom";
 const Home = () => {
   const { auth, setAuth } = useContext(AuthContext);
   const [gameModalOpen, setGameModalOpen] = useState(false);
-  const [mode, setMode] = useState("");
+  const [gameMode, setGameMode] = useState("");
   const setAuthModalOpen = useOutletContext();
 
   const handleClick = (mode) => {
@@ -18,7 +18,7 @@ const Home = () => {
       return;
     }
     setGameModalOpen(true);
-    setMode(mode);
+    setGameMode(mode);
   };
   return (
     <>
@@ -39,19 +39,19 @@ const Home = () => {
               <div className="flex flex-col space-y-4 max-w-xs">
                 <button
                   className="btn bg-gray-800 text-white rounded-lg py-3 px-6 font-semibold hover:bg-gray-900 transition"
-                  onClick={() => handleClick(mode)}
+                  onClick={() => handleClick("create")}
                 >
                   Create Game
                 </button>
                 <button
                   className="btn bg-gray-800 text-white rounded-lg py-3 px-6 font-semibold hover:bg-gray-900 transition"
-                  onClick={() => handleClick(mode)}
+                  onClick={() => handleClick("join")}
                 >
                   Join Game
                 </button>
                 <button
                   className="btn bg-gray-800 text-white rounded-lg py-3 px-6 font-semibold hover:bg-gray-900 transition"
-                  onClick={() => handleClick(mode)}
+                  onClick={() => handleClick("quick")}
                 >
                   Quick Game
                 </button>
@@ -175,7 +175,7 @@ const Home = () => {
         </footer>
       </div>
       <GameModal
-        mode={mode}
+        mode={gameMode}
         isOpen={gameModalOpen}
         onClose={() => setGameModalOpen(false)}
       />
