@@ -10,7 +10,7 @@ function Layout() {
       <div className="flex h-screen w-screen p-5 ">
         <SideBar setAuthModalOpen={setAuthModalOpen} />
         <div className="flex h-full w-full">
-          <Outlet />
+          <Outlet context={setAuthModalOpen} />
         </div>
       </div>
       <AuthModal

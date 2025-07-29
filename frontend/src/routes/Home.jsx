@@ -1,12 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import board from "../assets/board.png";
 import GameModal from "../components/GameModal";
 import AuthModal from "../components/AuthModal";
+import { AuthContext } from "../context/AuthContext";
+import { useOutletContext } from "react-router-dom";
 
 const Home = () => {
+  const { auth, setAuth } = useContext(AuthContext);
   const [gameModalOpen, setGameModalOpen] = useState(false);
   const [mode, setMode] = useState("");
+  const setAuthModalOpen = useOutletContext();
+
+  const handleClick = (mode) => {
+    if (!auth.isAuthenticated) {
+      setAuthModalOpen(true);
+      return;
+    }
+    setGameModalOpen(true);
+    setMode(mode);
+  };
   return (
     <>
       <div className="font-sans text-gray-800 bg-gray-100">
@@ -26,28 +39,19 @@ const Home = () => {
               <div className="flex flex-col space-y-4 max-w-xs">
                 <button
                   className="btn bg-gray-800 text-white rounded-lg py-3 px-6 font-semibold hover:bg-gray-900 transition"
-                  onClick={() => {
-                    setGameModalOpen(true);
-                    setMode("create");
-                  }}
+                  onClick={() => handleClick(mode)}
                 >
                   Create Game
                 </button>
                 <button
                   className="btn bg-gray-800 text-white rounded-lg py-3 px-6 font-semibold hover:bg-gray-900 transition"
-                  onClick={() => {
-                    setGameModalOpen(true);
-                    setMode("join");
-                  }}
+                  onClick={() => handleClick(mode)}
                 >
                   Join Game
                 </button>
                 <button
                   className="btn bg-gray-800 text-white rounded-lg py-3 px-6 font-semibold hover:bg-gray-900 transition"
-                  onClick={() => {
-                    setGameModalOpen(true);
-                    setMode("quick");
-                  }}
+                  onClick={() => handleClick(mode)}
                 >
                   Quick Game
                 </button>
