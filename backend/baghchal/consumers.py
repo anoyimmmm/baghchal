@@ -29,11 +29,10 @@ class GameConsumer(WebsocketConsumer):
             self.close(code=4000)
             return
         
-        # CRITICAL FIX: Accept the connection BEFORE doing anything else
         self.accept()
         print("WebSocket connection accepted")
         
-        # Handle different connection modescleara
+        # Handle different connection modesclearly
         try:
             self.handle_player_join()
         except Exception as e:
@@ -44,18 +43,15 @@ class GameConsumer(WebsocketConsumer):
         if self.mode == "create":
             # Set room group name for create mode
             self.room_group_name = f'game_{self.game_id}'
-            
             if self.room_group_name in game_states:
                 print("Error: Game already exists")
                 self.close(code=4001)
                 return
-                
             game_states[self.room_group_name] = get_initial_game_state()
             print(f"Created new game: {self.room_group_name}")
             
         elif self.mode == 'join':
             self.room_group_name = f'game_{self.game_id}'
-            
             joined_game = game_states.get(self.room_group_name)
             if not joined_game or joined_game.get('status') != "waiting":
                 print("Error: Game not available for joining")
@@ -74,6 +70,13 @@ class GameConsumer(WebsocketConsumer):
                 self.room_group_name = f'game_{new_game_id}'
                 game_states[self.room_group_name] = get_initial_game_state()
                 print(f"Created new quick game: {self.room_group_name}")
+
+        elif self.mode == 'rejoin':
+            # todo: check if the game already has this user as a player
+            self.room_group_name = f'game_{self.game_id}'
+            game_state = game_states.get(self.room_group_name)
+            if not game_state:
+                self.close(code=4000)
         
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
@@ -84,10 +87,15 @@ class GameConsumer(WebsocketConsumer):
         # Send initial game state to the connected player
         try:
             initial_state = game_states[self.room_group_name]
+            initial_state["game_id"] = self.room_group_name
+            print("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+            print(initial_state)
+            
+            
             self.send(text_data=json.dumps({
                 "message": {
                     "type": "init",
-                    "game_state": initial_state
+                    "game_state": initial_state,
                 }
             }))
             print(f"Sent initial game state to player")

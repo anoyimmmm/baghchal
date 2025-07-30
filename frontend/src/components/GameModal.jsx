@@ -20,7 +20,7 @@ function GameModal({ mode, isOpen, onClose }) {
     });
 
     const wsUrl = `ws://localhost:8000/ws/game/?${params}`;
-    console.log(wsUrl);
+    // console.log(wsUrl);
     connect(wsUrl);
   };
 

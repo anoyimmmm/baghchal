@@ -35,7 +35,7 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="user" element={<UserProfile />} />
-              <Route path="game" element={<Game />} />
+              <Route path="game/:gameId" element={<Game />} />
             </Route>
           </Routes>
         </WebSocketProvider>

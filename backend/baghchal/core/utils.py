@@ -9,7 +9,6 @@ def get_initial_game_state():
             "4-0": "tiger",
             "4-4": "tiger"
         },
-        "status": "ongoing",   # can be 'ongoing', 'goat_won', 'tiger_won'
         "currentPlayer": "goat",
         "phase": "placement",  # can be displacement',  'placement
         "unusedGoat": 20,
@@ -53,7 +52,7 @@ def update_game_state(room_name, move):
     game_state["currentPlayer"] = "tiger" if current_player == "goat" else "goat"
 
     check_game_over(game_state)
-
+ 
     return game_state
 
 def get_mid_key(from_key, to_key):

@@ -1,52 +1,60 @@
 import { useState, useEffect, useRef, use } from "react";
 import { useWebSocket } from "../context/WebSocketContext";
 import Board from "./Board";
-const initialGameState = {
-  board: {
-    "0-0": "tiger",
-    "0-4": "tiger",
-    "4-0": "tiger",
-    "4-4": "tiger",
-  },
-  currentPlayer: "goat",
-  phase: "placement",
-  unusedGoat: 20,
-  deadGoatCount: 0,
-  status: "waiting",
-  winner: null,
-};
+import { useParams } from "react-router-dom";
 
 const Game = () => {
-  const { send, gameState } = useWebSocket();
+  const { send, gameState, isConnected, connect } = useWebSocket();
   const [modalOpen, setModalOpen] = useState(false);
   const [winner, setWinner] = useState("");
+  let { gameId } = useParams();
+  gameId = gameId.replace("game_", "");
 
   useEffect(() => {
-    // const wsUrl = import.meta.env.VITE_WS_URL;
-    if (gameState.status === "over") {
-      setWinner(gameState.winner);
-      setModalOpen(true);
+    if (gameId && !isConnected) {
+      const params = new URLSearchParams({
+        game_id: gameId,
+        mode: "rejoin",
+      });
+      const wsUrl = `ws://localhost:8000/ws/game/?${params}`;
+
+      connect(wsUrl);
+    }
+    if (gameState) {
+      if (gameState.status === "over") {
+        setWinner(gameState.winner);
+        setModalOpen(true);
+      }
+    } else {
+      console.log("no game state");
     }
   }, [gameState]);
 
   const handleMoveSend = (move) => {
     console.log("sending move ", move);
-    console.log("stringified ", JSON.stringify(move));
     send(JSON.stringify(move));
   };
 
+  if (!isConnected || !gameState) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <div className="text-lg text-gray-600">
+          {!isConnected ? "Connecting to game..." : "Loading game state..."}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full w-full flex-row justify-evenly">
-      <div className="flex flex-col  justify-center overflow-hidden px-10 aspect-square ">
+      <div className="flex flex-col justify-center overflow-hidden px-10 aspect-square">
         player 1
-        {gameState && (
-          <Board
-            board={gameState.board}
-            currentPlayer={gameState.currentPlayer} // or gameState.currentPlayer if your backend uses that
-            phase={gameState.phase} // or gameState.phase if your backend uses that
-            onMoveSend={handleMoveSend}
-          />
-        )}
+        <Board
+          board={gameState.board}
+          currentPlayer={gameState.currentPlayer}
+          phase={gameState.phase}
+          onMoveSend={handleMoveSend}
+        />
         player 2
       </div>
       <GameStatus gameState={gameState} />
@@ -63,7 +71,7 @@ export default Game;
 
 const GameStatus = ({ gameState, moveHistory }) => {
   return (
-    <div className=" bg-white border-l border-gray-300 p-4 flex flex-col h-full w-80">
+    <div className="bg-white border-l border-gray-300 p-4 flex flex-col h-full w-80">
       {/* Game Status */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-3">
@@ -185,8 +193,7 @@ function WinnerModal({ winner, isOpen, onClose }) {
 
   return (
     <div
-      className="fixed inset-0  flex items-center justify-center z-50 bg-gray-200/70
-"
+      className="fixed inset-0 flex items-center justify-center z-50 bg-gray-200/70"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
