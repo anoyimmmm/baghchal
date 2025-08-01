@@ -3,12 +3,14 @@ import { useWebSocket } from "../context/WebSocketContext";
 import Board from "./Board";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Game = () => {
   const { auth } = useContext(AuthContext);
   const { send, gameState, isConnected, connect } = useWebSocket();
   const [modalOpen, setModalOpen] = useState(false);
   const [winner, setWinner] = useState("");
+  const navigate = useNavigate();
   let { gameId } = useParams();
   gameId = gameId.replace("game_", "");
 
@@ -26,6 +28,9 @@ const Game = () => {
       console.log("no game state");
     }
   }, [gameState]);
+  if (!auth.user) {
+    navigate("/");
+  }
 
   const handleMoveSend = (move) => {
     console.log("sending move ", move);
@@ -45,18 +50,16 @@ const Game = () => {
   return (
     <div className="flex flex-col lg:flex-row h-full w-full">
       {/* Game Board Area - Takes priority for space */}
-      <div className="flex flex-col justify-center overflow-hidden px-4 lg:px-10 flex-1 min-h-0 lg:h-full">
-        <div className="flex-shrink-0">
-          <PlayerCard
-            isUserCard={false}
-            username={auth.user.username}
-            goatPlayer={gameState.player["goat"]}
-            tigerPlayer={gameState.player["tiger"]}
-            currentPlayer={gameState.currentPlayer}
-            gameState={gameState}
-          />
-        </div>
-        <div className="flex-1 flex items-center justify-center min-h-0">
+      <div className="flex flex-col justify-center py-16 lg:p-0 flex-1 p-5">
+        <PlayerCard
+          isUserCard={false}
+          username={auth.user.username}
+          goatPlayer={gameState.player["goat"]}
+          tigerPlayer={gameState.player["tiger"]}
+          currentPlayer={gameState.currentPlayer}
+          gameState={gameState}
+        />
+        <div className="flex justify-center align-middle">
           <Board
             board={gameState.board}
             currentPlayer={gameState.currentPlayer}
@@ -66,15 +69,13 @@ const Game = () => {
             gameState={gameState}
           />
         </div>
-        <div className="flex-shrink-0">
-          <PlayerCard
-            isUserCard={true}
-            username={auth.user.username}
-            goatPlayer={gameState.player["goat"]}
-            tigerPlayer={gameState.player["tiger"]}
-            currentPlayer={gameState.currentPlayer}
-          />
-        </div>
+        <PlayerCard
+          isUserCard={true}
+          username={auth.user?.username}
+          goatPlayer={gameState.player["goat"]}
+          tigerPlayer={gameState.player["tiger"]}
+          currentPlayer={gameState.currentPlayer}
+        />
       </div>
 
       {/* Game Status - Takes remaining space */}
@@ -226,7 +227,7 @@ const PlayerCard = ({
 
   return (
     <div
-      className={`flex items-center justify-between p-2 rounded-lg my-auto ${
+      className={`flex items-center justify-between p-2 rounded-lg w-full my-3 lg:w-170 mx-auto ${
         isCurrentTurn ? "shadow-lg bg-gray-300" : ""
       }`}
     >

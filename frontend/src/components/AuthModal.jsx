@@ -70,105 +70,175 @@ const AuthModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white text-gray-800 p-6 rounded-lg shadow-lg w-[90%] max-w-md">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold capitalize">{mode}</h2>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white text-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-lg mx-auto border border-gray-200">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex items-center space-x-3">
+            <span className="text-3xl">{mode === "login" ? "🔐" : "👤"}</span>
+            <h2 className="text-2xl font-bold text-gray-800 capitalize">
+              {mode}
+            </h2>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-800"
+            className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
-            ✖
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            name="username"
-            placeholder="Username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded border-gray-300"
-          />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Username Field */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">
+              Username
+            </label>
+            <input
+              name="username"
+              placeholder="Enter your username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              className="w-full p-4 border border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all"
+            />
+          </div>
 
           {mode === "signup" && (
             <>
-              <input
-                name="email"
-                type="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full p-2 border rounded border-gray-300"
-              />
-              <input
-                name="displayName"
-                placeholder="Display Name"
-                value={formData.displayName}
-                onChange={handleChange}
-                className="w-full p-2 border rounded border-gray-300"
-              />
-              <input
-                type="file"
-                name="avatar"
-                accept="image/*"
-                onChange={handleChange}
-                className="w-full text-sm text-gray-600"
-              />
+              {/* Email Field */}
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">
+                  Email Address
+                </label>
+                <input
+                  name="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-4 border border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all"
+                />
+              </div>
+
+              {/* Display Name Field */}
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">
+                  Display Name
+                </label>
+                <input
+                  name="displayName"
+                  placeholder="How should we call you?"
+                  value={formData.displayName}
+                  onChange={handleChange}
+                  className="w-full p-4 border border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all"
+                />
+              </div>
+
+              {/* Avatar Upload */}
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">
+                  Profile Picture (Optional)
+                </label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    name="avatar"
+                    accept="image/*"
+                    onChange={handleChange}
+                    className="w-full p-4 border border-gray-300 rounded-xl bg-white text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 file:cursor-pointer cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all"
+                  />
+                </div>
+              </div>
             </>
           )}
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded border-gray-300"
-          />
+          {/* Password Field */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="w-full p-4 border border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all"
+            />
+          </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gray-800 text-white py-2 rounded hover:bg-gray-700 transition"
+            className="w-full bg-gray-800 text-white py-4 px-6 rounded-xl hover:bg-gray-900 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5  duration-200 disabled:transform-none disabled:shadow-lg flex items-center justify-center space-x-2"
           >
-            {loading
-              ? "Please wait..."
-              : mode === "login"
-              ? "Log In"
-              : "Sign Up"}
-          </button>
-
-          {message && <p className="text-sm text-gray-600">{message}</p>}
-
-          <p className="text-sm text-center mt-2">
-            {mode === "login" ? (
+            {loading ? (
               <>
-                Don't have an account?{" "}
-                <button
-                  type="button"
-                  onClick={toggleMode}
-                  className="text-blue-600 hover:underline"
-                >
-                  Sign up
-                </button>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                <span>Please wait...</span>
               </>
             ) : (
-              <>
-                Already have an account?{" "}
-                <button
-                  type="button"
-                  onClick={toggleMode}
-                  className="text-blue-600 hover:underline"
-                >
-                  Log in
-                </button>
-              </>
+              <span>{mode === "login" ? "Log In" : "Create Account"}</span>
             )}
-          </p>
+          </button>
+
+          {/* Message Display */}
+          {message && (
+            <div
+              className={`p-4 rounded-xl text-sm ${
+                message.includes("successful")
+                  ? "bg-green-50 text-green-800 border border-green-200"
+                  : "bg-red-50 text-red-800 border border-red-200"
+              }`}
+            >
+              {message}
+            </div>
+          )}
+
+          {/* Mode Toggle */}
+          <div className="text-center pt-4 border-t border-gray-200">
+            <p className="text-gray-600">
+              {mode === "login" ? (
+                <>
+                  Don't have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={toggleMode}
+                    className="text-gray-800 hover:text-gray-900 font-medium hover:underline transition-colors"
+                  >
+                    Sign up here
+                  </button>
+                </>
+              ) : (
+                <>
+                  Already have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={toggleMode}
+                    className="text-gray-800 hover:text-gray-900 font-medium hover:underline transition-colors"
+                  >
+                    Log in here
+                  </button>
+                </>
+              )}
+            </p>
+          </div>
         </form>
       </div>
     </div>
