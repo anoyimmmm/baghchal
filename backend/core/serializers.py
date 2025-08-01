@@ -6,7 +6,7 @@ class UserSerializer(serializers.ModelSerializer):
     display_name = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ['id','display_name', 'username', 'games_played', 'wins', 'losses', 'win_rate']
+        fields = ['id','display_name', 'username', 'games_played', 'wins', 'losses', 'win_rate', 'avatar']
         
     def get_win_rate(self, obj):
         return obj.win_rate()

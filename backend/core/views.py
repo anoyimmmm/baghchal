@@ -15,7 +15,7 @@ def signup(request):
     password = data.get('password')
     email = data.get('email')
     display_name = data.get('displayName', username)
-    # avatar = request.data.get("avatar") # save later on 
+    avatar = request.FILES.get("avatar")
 
     if not (username and  password and email):
         print('incomplete data')
@@ -30,6 +30,7 @@ def signup(request):
 
     user = User(username=username , email=email, first_name=display_name)
     user.set_password(password)
+    user.avatar = avatar
 
     if not user:
         print("unable to signup")

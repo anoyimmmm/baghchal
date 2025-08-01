@@ -53,7 +53,7 @@ function GameModal({ mode, isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white text-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-140 mx-auto border border-gray-200">
+      <div className="bg-white text-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-130 mx-auto border border-gray-200">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800 capitalize flex items-center space-x-3">

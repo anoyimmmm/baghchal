@@ -36,6 +36,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     setMessage("");
 
     try {
+      // signup
       if (mode === "signup") {
         const data = new FormData();
         data.append("username", formData.username);
@@ -51,6 +52,7 @@ const AuthModal = ({ isOpen, onClose }) => {
         setMessage("Signup successful! You can now log in.");
         setMode("login");
       } else {
+        // #login
         const response = await axios.post("http://localhost:8000/login/", {
           username: formData.username,
           password: formData.password,
@@ -58,6 +60,7 @@ const AuthModal = ({ isOpen, onClose }) => {
         setMessage("Login successful!");
         const userData = response.data.user_data;
         setAuth({ user: userData, isAuthenticated: true });
+        console.log(userData);
         console.log("authenticated");
         onClose();
       }

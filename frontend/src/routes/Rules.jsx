@@ -2,25 +2,24 @@ import board from "../assets/board.png";
 
 const Rules = () => {
   return (
-    <div className="font-sans text-gray-800 bg-gray-50 min-h-screen overflow-auto w-full">
+    <div className="font-sans text-gray-800 bg-gray-50 min-h-screen overflow-x-hidden w-full">
       {/* Header */}
       <section className="bg-white border-b border-gray-200 py-12">
-        <div className="container mx-auto px-4 text-center">
+        <div className="container mx-auto px-4 text-center max-w-6xl">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
             Bagh Chal Rules
           </h1>
-          <p className="text-xl text-gray-600 mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Master the ancient art of strategic warfare between tigers and goats
           </p>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16 max-w-6xl">
         {/* Game Overview */}
         <section className="mb-16">
-          <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 flex items-center">
-              <span className="text-4xl mr-4">🎯</span>
+          <div className="bg-white rounded-lg shadow-sm p-8 mb-8 border border-gray-200">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">
               Game Overview
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -32,22 +31,18 @@ const Rules = () => {
                   gameplay experience.
                 </p>
                 <div className="grid grid-cols-2 gap-4 text-center">
-                  <div className="bg-orange-100 p-4 rounded-lg">
-                    <div className="text-2xl mb-2">🐅</div>
-                    <div className="font-semibold text-orange-800">
-                      4 Tigers
-                    </div>
-                    <div className="text-sm text-orange-600">Hunters</div>
+                  <div className="bg-gray-100 p-4 rounded-lg border border-gray-200">
+                    <div className="font-semibold text-gray-800">4 Tigers</div>
+                    <div className="text-sm text-gray-600">Hunters</div>
                   </div>
-                  <div className="bg-green-100 p-4 rounded-lg">
-                    <div className="text-2xl mb-2">🐐</div>
-                    <div className="font-semibold text-green-800">20 Goats</div>
-                    <div className="text-sm text-green-600">Defenders</div>
+                  <div className="bg-gray-100 p-4 rounded-lg border border-gray-200">
+                    <div className="font-semibold text-gray-800">20 Goats</div>
+                    <div className="text-sm text-gray-600">Defenders</div>
                   </div>
                 </div>
               </div>
               <div className="flex justify-center overflow-hidden">
-                <div className="w-full max-w-80 bg-gray-100 p-6 rounded-xl">
+                <div className="w-full max-w-80 bg-gray-100 p-6 rounded-lg border border-gray-200">
                   <img
                     src={board}
                     alt="Bagh Chal game board"
@@ -61,32 +56,31 @@ const Rules = () => {
 
         {/* Setup */}
         <section className="mb-16">
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 flex items-center">
-              <span className="text-4xl mr-4">⚙️</span>
+          <div className="bg-white rounded-lg shadow-sm p-8 border border-gray-200">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">
               Game Setup
             </h2>
             <div className="space-y-6">
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
-                <h3 className="text-xl font-semibold text-blue-800 mb-3">
+              <div className="bg-gray-50 border-l-4 border-gray-400 p-6 rounded-r-lg">
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">
                   Initial Position
                 </h3>
                 <ul className="space-y-2 text-gray-700">
                   <li className="flex items-start">
-                    <span className="text-blue-500 mr-3 mt-1">•</span>
+                    <span className="text-gray-400 mr-3 mt-1">•</span>
                     <span>
                       4 tigers are placed at the four corner points of the board
                     </span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-blue-500 mr-3 mt-1">•</span>
+                    <span className="text-gray-400 mr-3 mt-1">•</span>
                     <span>
                       All 20 goats start off the board and will be placed during
                       gameplay
                     </span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-blue-500 mr-3 mt-1">•</span>
+                    <span className="text-gray-400 mr-3 mt-1">•</span>
                     <span>The goat player goes first</span>
                   </li>
                 </ul>
@@ -97,16 +91,15 @@ const Rules = () => {
 
         {/* Gameplay Phases */}
         <section className="mb-16">
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 flex items-center">
-              <span className="text-4xl mr-4">🎮</span>
+          <div className="bg-white rounded-lg shadow-sm p-8 border border-gray-200">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">
               Gameplay Phases
             </h2>
 
             <div className="space-y-8">
               {/* Phase 1 */}
-              <div className="border-l-4 border-green-500 bg-green-50 p-6 rounded-r-lg">
-                <h3 className="text-2xl font-semibold text-green-800 mb-4">
+              <div className="border-l-4 border-gray-400 bg-gray-50 p-6 rounded-r-lg">
+                <h3 className="text-2xl font-semibold text-gray-800 mb-4">
                   Phase 1: Placement Phase
                 </h3>
                 <div className="space-y-4">
@@ -116,8 +109,8 @@ const Rules = () => {
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="font-semibold text-green-700 mb-2">
-                        🐐 Goat Turn:
+                      <h4 className="font-semibold text-gray-800 mb-2">
+                        Goat Turn:
                       </h4>
                       <ul className="space-y-1 text-gray-700">
                         <li>• Place one goat on any empty intersection</li>
@@ -126,8 +119,8 @@ const Rules = () => {
                       </ul>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-orange-700 mb-2">
-                        🐅 Tiger Turn:
+                      <h4 className="font-semibold text-gray-800 mb-2">
+                        Tiger Turn:
                       </h4>
                       <ul className="space-y-1 text-gray-700">
                         <li>• Move one tiger to adjacent empty point</li>
@@ -136,18 +129,18 @@ const Rules = () => {
                       </ul>
                     </div>
                   </div>
-                  <div className="bg-yellow-100 p-4 rounded-lg">
-                    <p className="text-yellow-800 font-medium">
-                      📝 This phase ends when all 20 goats have been placed on
-                      the board
+                  <div className="bg-gray-100 p-4 rounded-lg border border-gray-200">
+                    <p className="text-gray-800">
+                      This phase ends when all 20 goats have been placed on the
+                      board
                     </p>
                   </div>
                 </div>
               </div>
 
               {/* Phase 2 */}
-              <div className="border-l-4 border-purple-500 bg-purple-50 p-6 rounded-r-lg">
-                <h3 className="text-2xl font-semibold text-purple-800 mb-4">
+              <div className="border-l-4 border-gray-400 bg-gray-50 p-6 rounded-r-lg">
+                <h3 className="text-2xl font-semibold text-gray-800 mb-4">
                   Phase 2: Movement Phase
                 </h3>
                 <div className="space-y-4">
@@ -157,8 +150,8 @@ const Rules = () => {
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="font-semibold text-green-700 mb-2">
-                        🐐 Goat Movement:
+                      <h4 className="font-semibold text-gray-800 mb-2">
+                        Goat Movement:
                       </h4>
                       <ul className="space-y-1 text-gray-700">
                         <li>• Move one goat to adjacent empty intersection</li>
@@ -168,8 +161,8 @@ const Rules = () => {
                       </ul>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-orange-700 mb-2">
-                        🐅 Tiger Movement:
+                      <h4 className="font-semibold text-gray-800 mb-2">
+                        Tiger Movement:
                       </h4>
                       <ul className="space-y-1 text-gray-700">
                         <li>• Move to adjacent empty point, OR</li>
@@ -187,21 +180,20 @@ const Rules = () => {
 
         {/* Movement Rules */}
         <section className="mb-16">
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 flex items-center">
-              <span className="text-4xl mr-4">🏃</span>
+          <div className="bg-white rounded-lg shadow-sm p-8 border border-gray-200">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">
               Movement Rules
             </h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="space-y-6">
-                <div className="bg-orange-50 border border-orange-200 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold text-orange-800 mb-4 flex items-center">
-                    🐅 Tiger Movement
+                <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                    Tiger Movement
                   </h3>
                   <div className="space-y-3">
                     <div>
-                      <h4 className="font-medium text-orange-700">
+                      <h4 className="font-medium text-gray-800">
                         Normal Move:
                       </h4>
                       <p className="text-gray-700">
@@ -209,7 +201,7 @@ const Rules = () => {
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-orange-700">
+                      <h4 className="font-medium text-gray-800">
                         Capture Move:
                       </h4>
                       <p className="text-gray-700">
@@ -217,28 +209,28 @@ const Rules = () => {
                         behind it. The goat is captured and removed.
                       </p>
                     </div>
-                    <div className="bg-orange-100 p-3 rounded">
-                      <p className="text-orange-800 text-sm font-medium">
-                        ⚠️ Tigers cannot jump over other tigers or jump to
-                        occupied intersections
+                    <div className="bg-gray-100 p-3 rounded border border-gray-200">
+                      <p className="text-gray-800 text-sm">
+                        Tigers cannot jump over other tigers or jump to occupied
+                        intersections
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-green-50 border border-green-200 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold text-green-800 mb-4 flex items-center">
-                    🐐 Goat Movement
+                <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                    Goat Movement
                   </h3>
                   <div className="space-y-3">
                     <div>
-                      <h4 className="font-medium text-green-700">Movement:</h4>
+                      <h4 className="font-medium text-gray-800">Movement:</h4>
                       <p className="text-gray-700">
                         Move to any adjacent empty intersection along the lines
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-green-700">
+                      <h4 className="font-medium text-gray-800">
                         No Capturing:
                       </h4>
                       <p className="text-gray-700">
@@ -246,17 +238,16 @@ const Rules = () => {
                         positioning and blocking
                       </p>
                     </div>
-                    <div className="bg-green-100 p-3 rounded">
-                      <p className="text-green-800 text-sm font-medium">
-                        💡 Goats must work together to create effective
-                        blockades
+                    <div className="bg-gray-100 p-3 rounded border border-gray-200">
+                      <p className="text-gray-800 text-sm">
+                        Goats must work together to create effective blockades
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gray-100 p-6 rounded-lg">
+              <div className="bg-gray-100 p-6 rounded-lg border border-gray-200">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">
                   Board Layout
                 </h3>
@@ -268,15 +259,15 @@ const Rules = () => {
                   </p>
                   <div className="space-y-2 text-sm text-gray-600">
                     <div className="flex items-center">
-                      <div className="w-3 h-3 bg-red-500 rounded-full mr-3"></div>
+                      <div className="w-3 h-3 bg-gray-500 rounded-full mr-3"></div>
                       <span>Corner points (tiger starting positions)</span>
                     </div>
                     <div className="flex items-center">
-                      <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                      <div className="w-3 h-3 bg-gray-400 rounded-full mr-3"></div>
                       <span>Edge points</span>
                     </div>
                     <div className="flex items-center">
-                      <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                      <div className="w-3 h-3 bg-gray-600 rounded-full mr-3"></div>
                       <span>Center and inner points</span>
                     </div>
                   </div>
@@ -288,19 +279,18 @@ const Rules = () => {
 
         {/* Victory Conditions */}
         <section className="mb-16">
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 flex items-center">
-              <span className="text-4xl mr-4">🏆</span>
+          <div className="bg-white rounded-lg shadow-sm p-8 border border-gray-200">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">
               Victory Conditions
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-orange-50 border-2 border-orange-300 p-6 rounded-xl">
-                <h3 className="text-2xl font-semibold text-orange-800 mb-4 flex items-center">
-                  🐅 Tigers Win
+              <div className="bg-gray-50 border border-gray-300 p-6 rounded-lg">
+                <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+                  Tigers Win
                 </h3>
                 <div className="space-y-4">
-                  <p className="text-lg text-orange-700 font-medium">
+                  <p className="text-lg text-gray-800 font-medium">
                     Capture 5 goats
                   </p>
                   <p className="text-gray-700">
@@ -308,8 +298,8 @@ const Rules = () => {
                     through jumping maneuvers. Each captured goat is permanently
                     removed from the board.
                   </p>
-                  <div className="bg-orange-100 p-4 rounded-lg">
-                    <p className="text-orange-800 text-sm">
+                  <div className="bg-gray-100 p-4 rounded-lg border border-gray-200">
+                    <p className="text-gray-800 text-sm">
                       <strong>Strategy:</strong> Focus on creating capture
                       opportunities and avoiding complete encirclement
                     </p>
@@ -317,12 +307,12 @@ const Rules = () => {
                 </div>
               </div>
 
-              <div className="bg-green-50 border-2 border-green-300 p-6 rounded-xl">
-                <h3 className="text-2xl font-semibold text-green-800 mb-4 flex items-center">
-                  🐐 Goats Win
+              <div className="bg-gray-50 border border-gray-300 p-6 rounded-lg">
+                <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+                  Goats Win
                 </h3>
                 <div className="space-y-4">
-                  <p className="text-lg text-green-700 font-medium">
+                  <p className="text-lg text-gray-800 font-medium">
                     Block all tiger movements
                   </p>
                   <p className="text-gray-700">
@@ -330,8 +320,8 @@ const Rules = () => {
                     make any legal move. This includes both normal moves and
                     capture moves.
                   </p>
-                  <div className="bg-green-100 p-4 rounded-lg">
-                    <p className="text-green-800 text-sm">
+                  <div className="bg-gray-100 p-4 rounded-lg border border-gray-200">
+                    <p className="text-gray-800 text-sm">
                       <strong>Strategy:</strong> Coordinate positioning to
                       create impenetrable barriers around tigers
                     </p>
@@ -344,20 +334,19 @@ const Rules = () => {
 
         {/* Strategy Tips */}
         <section className="mb-16">
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 flex items-center">
-              <span className="text-4xl mr-4">💡</span>
+          <div className="bg-white rounded-lg shadow-sm p-8 border border-gray-200">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">
               Strategy Tips
             </h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-xl font-semibold text-orange-700 mb-4">
-                  🐅 Tiger Strategies
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                  Tiger Strategies
                 </h3>
                 <div className="space-y-3">
-                  <div className="bg-orange-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-orange-700 mb-2">
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <h4 className="font-medium text-gray-800 mb-2">
                       Early Game
                     </h4>
                     <p className="text-gray-700 text-sm">
@@ -365,17 +354,15 @@ const Rules = () => {
                       to capture.
                     </p>
                   </div>
-                  <div className="bg-orange-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-orange-700 mb-2">
-                      Mid Game
-                    </h4>
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <h4 className="font-medium text-gray-800 mb-2">Mid Game</h4>
                     <p className="text-gray-700 text-sm">
                       Create threats from multiple directions. Force goats into
                       defensive positions.
                     </p>
                   </div>
-                  <div className="bg-orange-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-orange-700 mb-2">
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <h4 className="font-medium text-gray-800 mb-2">
                       Late Game
                     </h4>
                     <p className="text-gray-700 text-sm">
@@ -387,12 +374,12 @@ const Rules = () => {
               </div>
 
               <div>
-                <h3 className="text-xl font-semibold text-green-700 mb-4">
-                  🐐 Goat Strategies
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                  Goat Strategies
                 </h3>
                 <div className="space-y-3">
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-green-700 mb-2">
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <h4 className="font-medium text-gray-800 mb-2">
                       Placement Phase
                     </h4>
                     <p className="text-gray-700 text-sm">
@@ -400,8 +387,8 @@ const Rules = () => {
                       easy captures.
                     </p>
                   </div>
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-green-700 mb-2">
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <h4 className="font-medium text-gray-800 mb-2">
                       Movement Phase
                     </h4>
                     <p className="text-gray-700 text-sm">
@@ -409,8 +396,8 @@ const Rules = () => {
                       blocking if necessary.
                     </p>
                   </div>
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-green-700 mb-2">Endgame</h4>
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <h4 className="font-medium text-gray-800 mb-2">Endgame</h4>
                     <p className="text-gray-700 text-sm">
                       Tighten the noose gradually. Don't rush and leave escape
                       routes.
@@ -424,56 +411,55 @@ const Rules = () => {
 
         {/* Common Mistakes */}
         <section>
-          <div className="bg-red-50 border border-red-200 rounded-xl p-8">
-            <h2 className="text-3xl font-bold text-red-800 mb-6 flex items-center">
-              <span className="text-4xl mr-4">⚠️</span>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">
               Common Mistakes to Avoid
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-lg font-semibold text-red-700 mb-4">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
                   Tiger Mistakes:
                 </h3>
                 <ul className="space-y-2 text-gray-700">
                   <li className="flex items-start">
-                    <span className="text-red-500 mr-2 mt-1">✗</span>
+                    <span className="text-gray-400 mr-2 mt-1">✗</span>
                     <span>Moving tigers too close together</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-red-500 mr-2 mt-1">✗</span>
+                    <span className="text-gray-400 mr-2 mt-1">✗</span>
                     <span>Ignoring potential encirclement</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-red-500 mr-2 mt-1">✗</span>
+                    <span className="text-gray-400 mr-2 mt-1">✗</span>
                     <span>Making hasty capture attempts</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-red-500 mr-2 mt-1">✗</span>
+                    <span className="text-gray-400 mr-2 mt-1">✗</span>
                     <span>Getting trapped in corners</span>
                   </li>
                 </ul>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-red-700 mb-4">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
                   Goat Mistakes:
                 </h3>
                 <ul className="space-y-2 text-gray-700">
                   <li className="flex items-start">
-                    <span className="text-red-500 mr-2 mt-1">✗</span>
+                    <span className="text-gray-400 mr-2 mt-1">✗</span>
                     <span>Placing goats in easily captured positions</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-red-500 mr-2 mt-1">✗</span>
+                    <span className="text-gray-400 mr-2 mt-1">✗</span>
                     <span>Not coordinating movements</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-red-500 mr-2 mt-1">✗</span>
+                    <span className="text-gray-400 mr-2 mt-1">✗</span>
                     <span>Leaving gaps in defensive lines</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-red-500 mr-2 mt-1">✗</span>
+                    <span className="text-gray-400 mr-2 mt-1">✗</span>
                     <span>Being too aggressive early</span>
                   </li>
                 </ul>
