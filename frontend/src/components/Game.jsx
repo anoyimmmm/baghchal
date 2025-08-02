@@ -8,9 +8,9 @@ import { useNavigate } from "react-router-dom";
 const Game = () => {
   const { auth } = useContext(AuthContext);
   const { send, gameState, isConnected, connect } = useWebSocket();
+  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const [winner, setWinner] = useState("");
-  const navigate = useNavigate();
   let { gameId } = useParams();
   gameId = gameId.replace("game_", "");
 
@@ -238,6 +238,7 @@ const GameStatus = ({ gameState, moveHistory }) => {
 
 function WinnerModal({ winner, isOpen, onClose }) {
   if (!isOpen) return null;
+  const navigate = useNavigate();
 
   return (
     <div
@@ -251,7 +252,10 @@ function WinnerModal({ winner, isOpen, onClose }) {
         <h2 className="text-2xl font-bold mb-2 text-gray-800">Game Over!</h2>
         <p className="mb-6 text-lg text-gray-600 font-light">{winner} wins!</p>
         <button
-          onClick={onClose}
+          onClick={() => {
+            onClose();
+            navigate("/");
+          }}
           className="bg-gray-800 hover:bg-gray-900 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg"
         >
           Close
