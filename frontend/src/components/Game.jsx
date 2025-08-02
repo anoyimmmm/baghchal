@@ -53,7 +53,7 @@ const Game = () => {
       <div className="flex flex-col justify-center py-16 lg:p-0 flex-1 p-5">
         <PlayerCard
           isUserCard={false}
-          username={auth.user.username}
+          username={auth.user?.username}
           goatPlayer={gameState.player["goat"]}
           tigerPlayer={gameState.player["tiger"]}
           currentPlayer={gameState.currentPlayer}
