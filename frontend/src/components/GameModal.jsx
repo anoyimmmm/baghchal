@@ -39,6 +39,7 @@ function GameModal({ mode, isOpen, onClose }) {
 
   const handleCreate = () => {
     connect(gameId, "create", playerRole);
+    alert("creating a game");
   };
 
   const handleJoin = () => {
