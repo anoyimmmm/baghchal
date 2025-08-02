@@ -80,7 +80,15 @@ function SideBar({ setAuthModalOpen }) {
         </button>
 
         {/* Logo/Project Name */}
-        <div className="text-xl font-bold text-gray-800">BaghChal</div>
+        <div
+          onClick={() => {
+            navigate("/");
+            setIsMobileMenuOpen(false);
+          }}
+          className="text-xl font-bold text-gray-800"
+        >
+          BaghChal
+        </div>
 
         {/* Spacer to center the logo */}
         <div className="w-10"></div>
@@ -133,7 +141,7 @@ function SideBar({ setAuthModalOpen }) {
                 navigate("/");
                 setIsMobileMenuOpen(false);
               }}
-              className="text-2xl font-bold text-gray-800 mb-6 hover:text-gray-600 transition-colors"
+              className="text-2xl font-extrabold text-gray-800 mb-6 hover:text-gray-600 transition-colors"
             >
               BaghChal
             </button>
@@ -156,7 +164,7 @@ function SideBar({ setAuthModalOpen }) {
                   navigate("/rules");
                   setIsMobileMenuOpen(false);
                 }}
-                className="block w-full text-gray-800 font-medium hover:text-gray-600 transition-colors"
+                className="block w-full text-gray-800 text-lg font-extrabold hover:text-gray-600  transition-colors"
               >
                 RULES
               </button>

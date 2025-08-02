@@ -28,6 +28,7 @@ const Game = () => {
       console.log("no game state");
     }
   }, [gameState]);
+
   if (!auth.user) {
     navigate("/");
   }
@@ -39,27 +40,34 @@ const Game = () => {
 
   if (!isConnected || !gameState) {
     return (
-      <div className="flex h-full w-full items-center justify-center">
-        <div className="text-lg text-gray-600">
-          {!isConnected ? "Connecting to game..." : "Loading game state..."}
+      <div className="flex h-screen w-full items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="text-center space-y-4">
+          <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-800 rounded-full animate-spin mx-auto"></div>
+          <div className="text-gray-800 font-light text-lg">
+            {!isConnected ? "Connecting to game..." : "Loading game state..."}
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col lg:flex-row h-full w-full">
-      {/* Game Board Area - Takes priority for space */}
-      <div className="flex flex-col justify-center py-16 lg:p-0 flex-1 p-5">
-        <PlayerCard
-          isUserCard={false}
-          username={auth.user?.username}
-          goatPlayer={gameState.player["goat"]}
-          tigerPlayer={gameState.player["tiger"]}
-          currentPlayer={gameState.currentPlayer}
-          gameState={gameState}
-        />
-        <div className="flex justify-center align-middle">
+    <div className="h-full w-full flex flex-col lg:flex-row justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Game Board Area */}
+      <div className="flex-1 flex flex-col min-h-0 pt-20 md:pt-0 mb-10 md:mb-0">
+        {/* <div className="flex-1 flex flex-col justify-center space-y-2 sm:space-y-4 min-h-0"> */}
+        <div className="flex-shrink-0">
+          <PlayerCard
+            isUserCard={false}
+            username={auth.user?.username}
+            goatPlayer={gameState.player["goat"]}
+            tigerPlayer={gameState.player["tiger"]}
+            currentPlayer={gameState.currentPlayer}
+            gameState={gameState}
+          />
+        </div>
+
+        <div className="flex-1 flex justify-center items-center min-h-0 aspect-square">
           <Board
             board={gameState.board}
             currentPlayer={gameState.currentPlayer}
@@ -69,17 +77,22 @@ const Game = () => {
             gameState={gameState}
           />
         </div>
-        <PlayerCard
-          isUserCard={true}
-          username={auth.user?.username}
-          goatPlayer={gameState.player["goat"]}
-          tigerPlayer={gameState.player["tiger"]}
-          currentPlayer={gameState.currentPlayer}
-        />
+
+        <div className="flex-shrink-0 ">
+          <PlayerCard
+            isUserCard={true}
+            username={auth.user?.username}
+            goatPlayer={gameState.player["goat"]}
+            tigerPlayer={gameState.player["tiger"]}
+            currentPlayer={gameState.currentPlayer}
+            gameState={gameState}
+          />
+        </div>
+        {/* </div> */}
       </div>
 
-      {/* Game Status - Takes remaining space */}
-      <div className="flex-shrink-0 lg:w-80">
+      {/* Game Status Sidebar */}
+      <div className="w-full lg:w-80 flex-shrink-0 border-t lg:border-t-0 lg:border-l border-gray-200 bg-white lg:h-full shadow-lg">
         <GameStatus gameState={gameState} />
       </div>
 
@@ -96,29 +109,88 @@ const Game = () => {
 export default Game;
 
 const GameStatus = ({ gameState, moveHistory }) => {
+  const getCurrentTurnDisplay = () => {
+    if (gameState?.currentPlayer === "goat") {
+      return `${gameState.player.goat || "Goat Player"}'s Turn`;
+    } else {
+      return `${gameState.player.tiger || "Tiger Player"}'s Turn`;
+    }
+  };
+
+  const getGoatsOnBoard = () => {
+    if (!gameState?.board) return 0;
+    return Object.values(gameState.board).filter((piece) => piece === "goat")
+      .length;
+  };
+
+  const getPhaseDisplay = () => {
+    switch (gameState?.phase) {
+      case "placement":
+        return "Placement Phase";
+      case "movement":
+        return "Movement Phase";
+      default:
+        return "Unknown Phase";
+    }
+  };
+
   return (
-    <div className="bg-white border-t lg:border-t-0 lg:border-l border-gray-300 p-4 flex flex-col w-full lg:w-80 h-64 lg:h-full overflow-y-auto">
-      {/* Piece Counts */}
+    <div className="h-64 lg:h-full flex flex-col p-3 lg:p-4 font-sans">
+      {/* Current Turn */}
       <div className="mb-4 lg:mb-6 flex-shrink-0">
-        <h3 className="text-lg font-semibold text-gray-800 mb-3">
-          Game Status
+        <h3 className="text-xs lg:text-sm font-semibold text-gray-800 uppercase tracking-wider mb-2">
+          Current Turn
         </h3>
-        <div className="space-y-2">
-          <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded">
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-              <span className="text-gray-600">Goats Remaining:</span>
-            </div>
-            <span className="font-semibold text-gray-800">
-              {gameState?.unusedGoat || 20}
+        <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-2 lg:p-3 border border-gray-200 shadow-sm">
+          <div className="text-sm lg:text-lg font-bold text-gray-800">
+            {getCurrentTurnDisplay()}
+          </div>
+          {/* <div className="text-xs lg:text-sm text-gray-600 mt-1 font-light">
+            {getPhaseDisplay()}
+          </div> */}
+        </div>
+      </div>
+
+      <div className="mb-4 lg:mb-6 flex-shrink-0 ">
+        {/* <h3 className="text-xs lg:text-sm font-semibold text-gray-800 uppercase tracking-wider mb-2 lg:mb-3">
+          Phase
+        </h3> */}
+        <div className="flex justify-between items-center py-1.5 lg:py-2 px-2 lg:px-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 shadow-sm">
+          <span className="text-gray-800 text-xs lg:text-sm font-medium">
+            Phase
+          </span>
+          <span className="font-bold text-gray-800 text-xs lg:text-base">
+            {gameState?.phase || 0}
+          </span>
+        </div>
+      </div>
+      {/* Game Statistics */}
+      <div className="mb-4 lg:mb-6 flex-shrink-0 ">
+        <h3 className="text-xs lg:text-sm font-semibold text-gray-800 uppercase tracking-wider mb-2 lg:mb-3">
+          Game Statistics
+        </h3>
+        <div className="space-y-2 lg:space-y-3">
+          <div className="flex justify-between items-center py-1.5 lg:py-2 px-2 lg:px-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 shadow-sm">
+            <span className="text-gray-800 text-xs lg:text-sm font-medium">
+              Goats Remaining
+            </span>
+            <span className="font-bold text-gray-800 text-xs lg:text-base">
+              {gameState?.unusedGoat || 0}
             </span>
           </div>
-          <div className="flex justify-between items-center py-2 px-3 bg-red-50 rounded">
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-red-500 rounded-full"></div>
-              <span className="text-gray-600">Goats Captured:</span>
-            </div>
-            <span className="font-semibold text-gray-800">
+          <div className="flex justify-between items-center py-1.5 lg:py-2 px-2 lg:px-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 shadow-sm">
+            <span className="text-gray-800 text-xs lg:text-sm font-medium">
+              Goats on Board
+            </span>
+            <span className="font-bold text-gray-800 text-xs lg:text-base">
+              {getGoatsOnBoard()}
+            </span>
+          </div>
+          <div className="flex justify-between items-center py-1.5 lg:py-2 px-2 lg:px-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 shadow-sm">
+            <span className="text-gray-800 text-xs lg:text-sm font-medium">
+              Goats Captured
+            </span>
+            <span className="font-bold text-gray-800 text-xs lg:text-base">
               {gameState?.deadGoatCount || 0}
             </span>
           </div>
@@ -127,29 +199,31 @@ const GameStatus = ({ gameState, moveHistory }) => {
 
       {/* Move History */}
       <div className="flex-1 min-h-0">
-        <h3 className="text-lg font-semibold text-gray-800 mb-3">
+        <h3 className="text-xs lg:text-sm font-semibold text-gray-800 uppercase tracking-wider mb-2 lg:mb-3">
           Move History
         </h3>
-        <div className="bg-gray-50 rounded p-3 h-full overflow-y-auto">
+        <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-2 lg:p-3 h-full overflow-hidden flex flex-col border border-gray-200 shadow-sm">
           {!moveHistory || moveHistory.length === 0 ? (
-            <p className="text-gray-500 text-sm text-center mt-8">
-              No moves yet
-            </p>
+            <div className="flex-1 flex items-center justify-center">
+              <p className="text-gray-600 text-xs lg:text-sm font-light">
+                No moves yet
+              </p>
+            </div>
           ) : (
-            <div className="space-y-2">
+            <div className="flex-1 overflow-y-auto space-y-1 lg:space-y-2">
               {moveHistory.map((move, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between py-1 px-2 bg-white rounded text-sm"
+                  className="flex items-center justify-between py-1 lg:py-2 px-2 lg:px-3 bg-white rounded-lg border border-gray-200 text-xs lg:text-sm shadow-sm"
                 >
-                  <span className="font-medium text-gray-600">
+                  <span className="font-semibold text-gray-600 text-xs">
                     #{index + 1}
                   </span>
-                  <span className="capitalize text-gray-800">
+                  <span className="capitalize text-gray-800 font-bold">
                     {move.player}
                   </span>
-                  <span className="text-gray-600">{move.type}</span>
-                  <span className="text-gray-500">
+                  <span className="text-gray-600 font-medium">{move.type}</span>
+                  <span className="text-gray-600 text-xs font-light">
                     {move.from} → {move.to}
                   </span>
                 </div>
@@ -167,17 +241,18 @@ function WinnerModal({ winner, isOpen, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center z-50 bg-gray-200/70"
+      className="fixed inset-0 flex items-center justify-center z-50 bg-black/50"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-gray-800 rounded-lg shadow-lg max-w-md w-full p-6 text-center text-white">
-        <h2 className="text-2xl font-bold mb-4">🎉 Congratulations!</h2>
-        <p className="mb-6 text-lg">{winner} is the winner!</p>
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 text-center font-sans">
+        <div className="text-4xl mb-4">🎉</div>
+        <h2 className="text-2xl font-bold mb-2 text-gray-800">Game Over!</h2>
+        <p className="mb-6 text-lg text-gray-600 font-light">{winner} wins!</p>
         <button
           onClick={onClose}
-          className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-semibold"
+          className="bg-gray-800 hover:bg-gray-900 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg"
         >
           Close
         </button>
@@ -186,8 +261,6 @@ function WinnerModal({ winner, isOpen, onClose }) {
   );
 }
 
-// Add this new component
-// Replace the PlayerCard component with this:
 const PlayerCard = ({
   isUserCard,
   username,
@@ -216,50 +289,70 @@ const PlayerCard = ({
   }
 
   const isCurrentTurn = currentPlayer === player;
-  const bgColor = player === "tiger" ? "bg-amber-500" : "bg-green-500";
-  const highlightColor = player === "tiger" ? "bg-amber-400" : "bg-green-400";
-
-  // Get count based on player type
-  const count =
-    player === "goat"
-      ? gameState?.unusedGoat || 20 // Goats remaining to place (unused goats)
-      : gameState?.deadGoatCount || 0; // Goats captured by tigers (goats killed)
 
   return (
     <div
-      className={`flex items-center justify-between p-2 rounded-lg w-full my-3 lg:w-170 mx-auto ${
-        isCurrentTurn ? "shadow-lg bg-gray-300" : ""
+      className={`flex items-center justify-between px-2 py-1 rounded-xl border-2 transition-all max-w-sm mx-auto w-full font-sans shadow-sm ${
+        isCurrentTurn
+          ? "border-gray-800 bg-gray-800 text-white shadow-lg"
+          : "border-gray-200 bg-white"
       }`}
     >
-      <div className="flex items-center">
-        <div className={`w-6 h-6 ${bgColor} rounded-full mr-2`}></div>
-        <div>
-          <div className="font-semibold text-gray-800 text-sm">{cardName}</div>
-          <div className="text-xs text-gray-600 capitalize">{player}</div>
+      <div className="flex items-center space-x-2 sm:space-x-3">
+        <div
+          className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+            isCurrentTurn ? "bg-white" : "bg-gray-800"
+          }`}
+        >
+          <span
+            className={`text-xs font-bold uppercase ${
+              isCurrentTurn ? "text-gray-800" : "text-white"
+            }`}
+          >
+            {player.charAt(0)}
+          </span>
+        </div>
+        <div className="min-w-0">
+          <div
+            className={`font-bold text-sm sm:text-base truncate ${
+              isCurrentTurn ? "text-white" : "text-gray-800"
+            }`}
+          >
+            {cardName}
+          </div>
+          <div
+            className={`text-xs sm:text-sm capitalize font-light ${
+              isCurrentTurn ? "text-gray-200" : "text-gray-600"
+            }`}
+          >
+            {player}
+          </div>
         </div>
       </div>
-      <div className="text-right">
-        <div className="text-s text-gray-500">
-          {player === "goat" ? "Remaining" : "Captured"}
+
+      {isCurrentTurn && (
+        <div className="text-right flex-shrink-0">
+          <div className="text-xs text-gray-200 uppercase tracking-wider font-semibold">
+            Your Turn
+          </div>
+          <div className="w-2 h-2 bg-gray-200 rounded-full animate-pulse ml-auto"></div>
         </div>
-        <div className="font-bold text-gray-800">{count}</div>
-      </div>
+      )}
     </div>
   );
 };
 
-// Add this new component
 const WaitingModal = ({ isOpen }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-200/70">
-      <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-8 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-        <h2 className="text-xl font-semibold mb-2 text-gray-800">
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8 text-center font-sans">
+        <div className="w-12 h-12 border-2 border-gray-300 border-t-gray-800 rounded-full animate-spin mx-auto mb-4"></div>
+        <h2 className="text-xl font-bold mb-2 text-gray-800">
           Waiting for player...
         </h2>
-        <p className="text-gray-600">
+        <p className="text-gray-600 font-light">
           Looking for another player to join the game
         </p>
       </div>

@@ -6,16 +6,16 @@ import { AuthContext } from "../context/AuthContext.jsx";
 const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
   const { auth } = useContext(AuthContext);
   const containerRef = useRef(null);
-  const [dimensions, setDimensions] = useState({ width: 800, height: 800 });
+  const [dimensions, setDimensions] = useState({ width: 400, height: 400 });
 
   const boardSize = 4;
 
   // Calculate responsive dimensions
-  const containerPadding = 0; // Fixed padding for the border container
+  const containerPadding = 16; // Padding for the border container
   const availableSize =
-    Math.min(dimensions.width, dimensions.height) - containerPadding * 2;
-  const cellSize = availableSize / 5; // 4 cells + 1.5 for internal padding
-  const pieceRadius = cellSize * 0.25; // 20% of cell size
+    Math.min(dimensions.width, dimensions.height) - containerPadding;
+  const cellSize = availableSize / 5; // 4 cells + padding adjustment
+  const pieceRadius = Math.max(cellSize * 0.2, 8); // Minimum 8px radius
   const padding = cellSize / 2; // Internal SVG padding
   const svgSize = availableSize;
 
@@ -29,10 +29,13 @@ const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
     const updateDimensions = () => {
       if (containerRef.current) {
         const container = containerRef.current;
-        const containerWidth = container.clientWidth;
-        const containerHeight = container.clientHeight;
+        const rect = container.getBoundingClientRect();
 
-        // Calculate the maximum size that fits in the container while maintaining square aspect ratio
+        // Get the actual available space
+        const containerWidth = rect.width;
+        const containerHeight = rect.height;
+
+        // Calculate the maximum size that fits maintaining square aspect ratio
         const maxSize = Math.min(containerWidth, containerHeight);
 
         setDimensions({
@@ -42,8 +45,8 @@ const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
       }
     };
 
-    // Initial calculation
-    updateDimensions();
+    // Initial calculation with a small delay to ensure DOM is ready
+    const timer = setTimeout(updateDimensions, 0);
 
     // Add resize listener
     window.addEventListener("resize", updateDimensions);
@@ -56,6 +59,7 @@ const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
     }
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener("resize", updateDimensions);
       if (resizeObserver) {
         resizeObserver.disconnect();
@@ -103,6 +107,8 @@ const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
   // draw grid lines
   const renderGridLines = () => {
     const lines = [];
+    const strokeWidth = Math.max(1, cellSize * 0.008);
+
     for (let row = 0; row <= boardSize; row++) {
       const y = padding + row * cellSize;
       lines.push(
@@ -113,7 +119,7 @@ const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
           x2={padding + boardSize * cellSize}
           y2={y}
           className="stroke-gray-400"
-          style={{ strokeWidth: Math.max(1, cellSize * 0.0075) }}
+          style={{ strokeWidth }}
         />
       );
     }
@@ -126,8 +132,8 @@ const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
           y1={padding}
           x2={x}
           y2={padding + boardSize * cellSize}
-          className="stroke-gray-500"
-          style={{ strokeWidth: Math.max(1, cellSize * 0.0075) }}
+          className="stroke-gray-400"
+          style={{ strokeWidth }}
         />
       );
     }
@@ -144,7 +150,7 @@ const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
     const centerX = padding + 2 * cellSize;
     const centerY = padding + 2 * cellSize;
 
-    const strokeWidth = Math.max(1, cellSize * 0.0075);
+    const strokeWidth = Math.max(1, cellSize * 0.008);
 
     // main diagonals
     lines.push(
@@ -154,7 +160,7 @@ const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
         y1={startY}
         x2={endX}
         y2={endY}
-        className="stroke-gray-500"
+        className="stroke-gray-400"
         style={{ strokeWidth }}
       />
     );
@@ -165,7 +171,7 @@ const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
         y1={startY}
         x2={startX}
         y2={endY}
-        className="stroke-gray-500"
+        className="stroke-gray-400"
         style={{ strokeWidth }}
       />
     );
@@ -186,7 +192,7 @@ const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
           y1={quad.y1}
           x2={quad.x2}
           y2={quad.y2}
-          className="stroke-gray-500"
+          className="stroke-gray-400"
           style={{ strokeWidth }}
         />
       );
@@ -197,7 +203,7 @@ const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
           y1={quad.y1}
           x2={quad.x1}
           y2={quad.y2}
-          className="stroke-gray-500"
+          className="stroke-gray-400"
           style={{ strokeWidth }}
         />
       );
@@ -292,18 +298,32 @@ const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
   return (
     <div
       ref={containerRef}
-      className="border-3 border-gray-400 rounded-lg shadow-lg overflow-hidden flex items-center justify-center aspect-square w-full max-w-2xl mx-auto "
+      className="h-full w-full aspect-square flex items-center justify-center p-2"
     >
-      <svg
-        width={svgSize}
-        height={svgSize}
-        className="bg-white"
-        viewBox={`0 0 ${svgSize} ${svgSize}`}
+      <div
+        className="border-2 border-gray-300 rounded-lg shadow-sm bg-white overflow-hidden"
+        style={{
+          width: svgSize + containerPadding,
+          height: svgSize + containerPadding,
+          maxWidth: "100%",
+          maxHeight: "100%",
+        }}
       >
-        <g>{renderGridLines()}</g>
-        <g>{renderDiagonalLines()}</g>
-        <g>{renderPieces()}</g>
-      </svg>
+        <svg
+          width={svgSize}
+          height={svgSize}
+          className="w-full h-full"
+          viewBox={`0 0 ${svgSize} ${svgSize}`}
+          style={{
+            display: "block",
+            margin: containerPadding / 2,
+          }}
+        >
+          <g>{renderGridLines()}</g>
+          <g>{renderDiagonalLines()}</g>
+          <g>{renderPieces()}</g>
+        </svg>
+      </div>
     </div>
   );
 };
