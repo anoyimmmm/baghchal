@@ -137,7 +137,7 @@ function GameModal({ mode, isOpen, onClose }) {
               />
             </div>
 
-            <div>
+            {/* <div>
               <label className="block mb-3 text-gray-700 font-medium">
                 Choose your role:
               </label>
@@ -150,11 +150,12 @@ function GameModal({ mode, isOpen, onClose }) {
                 <option value="tiger">🐅 Tiger (Hunter)</option>
                 <option value="goat">🐐 Goat (Defender)</option>
               </select>
-            </div>
+            </div> */}
 
             <button
               onClick={handleJoin}
-              disabled={!joinId.trim() || !playerRole}
+              // disabled={!joinId.trim() || !playerRole}
+              disabled={!joinId.trim()}
               className="bg-gray-800 text-white px-6 py-3 rounded-xl w-full hover:bg-gray-900 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-200 disabled:transform-none disabled:shadow-lg"
             >
               Join Game
@@ -173,7 +174,7 @@ function GameModal({ mode, isOpen, onClose }) {
                 We'll match you with another player shortly
               </p>
             </div>
-
+            {/* 
             <div>
               <label className="block mb-3 text-gray-700 font-medium">
                 Preferred role:
@@ -187,7 +188,7 @@ function GameModal({ mode, isOpen, onClose }) {
                 <option value="tiger">🐯 Tiger (Hunter)</option>
                 <option value="goat">🐐 Goat (Defender)</option>
               </select>
-            </div>
+            </div> */}
           </div>
         )}
       </div>
