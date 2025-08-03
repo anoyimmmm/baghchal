@@ -11,11 +11,11 @@ const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
   const boardSize = 4;
 
   // Calculate responsive dimensions
-  const containerPadding = 16; // Padding for the border container
+  const containerPadding = 0; // Padding for the border container
   const availableSize =
     Math.min(dimensions.width, dimensions.height) - containerPadding;
   const cellSize = availableSize / 5; // 4 cells + padding adjustment
-  const pieceRadius = Math.max(cellSize * 0.2, 8); // Minimum 8px radius
+  const pieceRadius = Math.max(cellSize * 0.25, 8); // Minimum 8px radius
   const padding = cellSize / 2; // Internal SVG padding
   const svgSize = availableSize;
 
