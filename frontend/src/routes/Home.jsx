@@ -23,7 +23,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="font-sans text-gray-800 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen overflow-x-hidden w-full">
+      <div className="font-sans text-gray-800 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen overflow-x-hidden w-full ">
         {/* Enhanced Hero Section */}
         <section className="min-h-screen flex items-center justify-center ">
           <div className="container px-4  w-full">
@@ -83,7 +83,7 @@ const Home = () => {
                 </div>
 
                 {/* Game Stats */}
-                <div className="flex flex-wrap justify-center lg:justify-start gap-8 pt-8 text-center">
+                <div className="flex flex-wrap justify-center lg:justify-start gap-8 mt-10 text-center">
                   <div>
                     <div className="text-2xl font-bold text-gray-800">4</div>
                     <div className="text-sm text-gray-600">Tigers</div>
@@ -129,7 +129,7 @@ const Home = () => {
             </div>
 
             {/* Subtle Call to Action */}
-            <div className="text-center mt-20">
+            <div className="text-center mt-10">
               <p className="text-gray-500 text-lg">
                 Ready to test your strategic mind?
               </p>
