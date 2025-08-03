@@ -174,14 +174,6 @@ const GameStatus = ({ gameState, moveHistory }) => {
         <div className="space-y-2 lg:space-y-3">
           <div className="flex justify-between items-center py-1.5 lg:py-2 px-2 lg:px-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 shadow-sm">
             <span className="text-gray-800 text-xs lg:text-sm font-medium">
-              Goats Captured
-            </span>
-            <span className="font-bold text-gray-800 text-xs lg:text-base">
-              {gameState?.deadGoatCount || 0}
-            </span>
-          </div>
-          <div className="flex justify-between items-center py-1.5 lg:py-2 px-2 lg:px-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 shadow-sm">
-            <span className="text-gray-800 text-xs lg:text-sm font-medium">
               Goats Remaining
             </span>
             <span className="font-bold text-gray-800 text-xs lg:text-base">
@@ -194,6 +186,14 @@ const GameStatus = ({ gameState, moveHistory }) => {
             </span>
             <span className="font-bold text-gray-800 text-xs lg:text-base">
               {getGoatsOnBoard()}
+            </span>
+          </div>
+          <div className="flex justify-between items-center py-1.5 lg:py-2 px-2 lg:px-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 shadow-sm">
+            <span className="text-gray-800 text-xs lg:text-sm font-medium">
+              Goats Captured
+            </span>
+            <span className="font-bold text-gray-800 text-xs lg:text-base">
+              {gameState?.deadGoatCount || 0}
             </span>
           </div>
         </div>
