@@ -336,7 +336,7 @@ const PlayerCard = ({
         </div>
       </div>
 
-      {isCurrentTurn && (
+      {isCurrentTurn && cardName === username && (
         <div className="text-right flex-shrink-0">
           <div className="text-xs text-gray-200 uppercase tracking-wider font-semibold">
             Your Turn
