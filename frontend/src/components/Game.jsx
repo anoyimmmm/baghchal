@@ -75,6 +75,8 @@ const Game = () => {
             onMoveSend={handleMoveSend}
             player={gameState.player}
             gameState={gameState}
+            newPosition={gameState.newPosition}
+            previousPosition={gameState.previousPosition}
           />
         </div>
 

@@ -15,6 +15,8 @@ def get_initial_game_state():
         "deadGoatCount": 0,
         "status": "waiting",   # can be 'waiting', 'ongoing', 'over'
         "winner": None ,# can be goat or tiger
+        "newPosition": "",
+        "previousPosition": "",
         'player': {
             "goat":"",  # username 
             "tiger":"", #username
@@ -55,6 +57,10 @@ def update_game_state(room_name, move):
 
     # Switch player
     game_state["currentPlayer"] = "tiger" if current_player == "goat" else "goat"
+    # set previous and new position
+    game_state["newPosition"] = to_key
+    game_state["previousPosition"] = from_key
+    print(game_state)
 
     check_game_over(game_state)
  

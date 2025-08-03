@@ -3,7 +3,15 @@ import Piece from "./Piece";
 import ValidateMove from "./utilities/MoveValidation.js";
 import { AuthContext } from "../context/AuthContext.jsx";
 
-const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
+const Board = ({
+  board,
+  currentPlayer,
+  phase,
+  onMoveSend,
+  player,
+  newPosition,
+  previousPosition,
+}) => {
   const { auth } = useContext(AuthContext);
   const containerRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 400, height: 400 });
@@ -234,6 +242,8 @@ const Board = ({ board, currentPlayer, phase, onMoveSend, player }) => {
             isSelected={boardState.selectedPiece === pieceKey}
             onClick={handlePieceClick}
             onHover={handlePieceHover}
+            isPreviousPosition={previousPosition === pieceKey}
+            isNewPosition={newPosition === pieceKey}
           />
         );
       }

@@ -11,6 +11,8 @@ const Piece = ({
   pieceType = null, // 'tiger', 'goat', or null
   isSelected = false,
   isHighlighted = false,
+  isPreviousPosition = false,
+  isNewPosition = false,
   onClick,
   onHover,
 }) => {
@@ -41,6 +43,12 @@ const Piece = ({
     } else if (isHovered) {
       strokeWidth = 3;
       fill = "#c7c5c5";
+    } else if (isNewPosition) {
+      strokeWidth: 3;
+      stroke = "#1fcc1d";
+    } else if (isPreviousPosition) {
+      strokeWidth: 3;
+      stroke = "#f06c6c";
     }
 
     return {

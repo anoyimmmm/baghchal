@@ -15,6 +15,8 @@ const initialGameState = {
   deadGoatCount: 0,
   status: "waiting",
   winner: null,
+  newPosition: "",
+  previousPosition: "",
   player: {
     goat: "",
     tiger: "",
