@@ -77,3 +77,5 @@ const PlayerCard = ({
     </div>
   );
 };
+
+export default PlayerCard;
