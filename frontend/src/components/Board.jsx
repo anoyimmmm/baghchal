@@ -77,7 +77,8 @@ const Board = ({
 
   // handle piece clicks
   const handlePieceClick = (row, col, pieceType) => {
-    if (player[currentPlayer] != auth.user?.username) return;
+    if (![auth.user?.username, auth.guestId].includes(player[currentPlayer]))
+      return;
 
     const pieceKey = `${row}-${col}`;
     handleSelection(row, col, pieceType);

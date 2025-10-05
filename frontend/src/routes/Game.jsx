@@ -68,7 +68,7 @@ const Game = () => {
         <div className="flex-shrink-0">
           <PlayerCard
             isUserCard={false}
-            username={auth.user?.username}
+            username={auth.user?.username || auth.guestId}
             goatPlayer={gameState.player["goat"]}
             tigerPlayer={gameState.player["tiger"]}
             currentPlayer={gameState.currentPlayer}
@@ -92,7 +92,7 @@ const Game = () => {
         <div className="flex-shrink-0 ">
           <PlayerCard
             isUserCard={true}
-            username={auth.user?.username}
+            username={auth.user?.username || auth.guestId}
             goatPlayer={gameState.player["goat"]}
             tigerPlayer={gameState.player["tiger"]}
             currentPlayer={gameState.currentPlayer}

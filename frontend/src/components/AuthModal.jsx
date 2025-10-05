@@ -16,6 +16,10 @@ const AuthModal = ({ isOpen, onClose }) => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    console.log(auth.guestId);
+  }, [auth]);
+
   if (!isOpen) return null;
 
   const toggleMode = () => {
@@ -30,13 +34,11 @@ const AuthModal = ({ isOpen, onClose }) => {
       [name]: files ? files[0] : value,
     }));
   };
-  const generateGuestId = () => {
-    return crypto.randomUUID();
-  };
 
   const handleContinueAsGuest = () => {
+    const guestId = crypto.randomUUID();
+    setAuth({ isAuthenticated: false, guestId: guestId });
     onClose();
-    setAuth({ isAuthenticated: false, guestId: generateGuestId() });
   };
 
   const handleSubmit = async (e) => {
