@@ -29,6 +29,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'baghchal-1.onrender.com',
+    'https://baghchal.fly.dev',
 ]
 
 
