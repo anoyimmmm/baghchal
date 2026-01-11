@@ -25,7 +25,6 @@ export default function Home() {
               <h1 className="text-6xl md:text-7xl font-bold text-white mb-4 tracking-tight leading-none">
                 Bagh Chal
               </h1>
-              <div className="w-20 h-1 bg-[#f95e5e] mb-5 mx-auto lg:mx-0 rounded"></div>
               <p className="text-2xl text-gray-400 font-light">
                 The Ancient Game of Strategy
               </p>
@@ -40,17 +39,17 @@ export default function Home() {
             <div className="space-y-3 max-w-sm mx-auto lg:mx-0">
               <PrimaryButton onClick={() => handleClick("create")}>
                 <span>🎯</span>
-                <span>Create Game</span>
+                <span className="text-xl">Create Game</span>
               </PrimaryButton>
 
               <SecondaryButton onClick={() => handleClick("join")}>
                 <span>🤝</span>
-                <span>Join Game</span>
+                <span className="text-xl">Join Game</span>
               </SecondaryButton>
 
               <PrimaryButton onClick={() => handleClick("quick")}>
                 <span>⚡</span>
-                <span>Quick Match</span>
+                <span className="text-xl">Quick Match</span>
               </PrimaryButton>
             </div>
 

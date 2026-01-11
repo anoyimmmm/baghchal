@@ -135,7 +135,7 @@ function SideBar({ setAuthModalOpen }) {
             >
               Bagh Chal
             </button>
-            <div className="w-16 h-1 bg-[#f95e5e] mx-auto rounded"></div>
+            <div className="w-33 h-1 bg-[#f95e5e] mx-auto rounded"></div>
           </div>
 
           {/* User Profile Section */}
