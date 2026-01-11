@@ -134,7 +134,7 @@ const Modal = ({ isOpen, onClose, mode }) => {
 
   const handleQuick = () => {
     console.log("Searching for quick game");
-    connect("", "quick", playerRole);
+    connect("", "quick");
   };
 
   const handleCopy = async (e) => {

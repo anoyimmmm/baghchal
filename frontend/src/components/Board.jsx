@@ -19,12 +19,12 @@ const Board = ({
   const boardSize = 4;
 
   // Calculate responsive dimensions
-  const containerPadding = 0; // Padding for the border container
+  const containerPadding = 0;
   const availableSize =
     Math.min(dimensions.width, dimensions.height) - containerPadding;
-  const cellSize = availableSize / 5; // 4 cells + padding adjustment
-  const pieceRadius = Math.max(cellSize * 0.25, 8); // Minimum 8px radius
-  const padding = cellSize / 2; // Internal SVG padding
+  const cellSize = availableSize / 5;
+  const pieceRadius = Math.max(cellSize * 0.25, 8);
+  const padding = cellSize / 2;
   const svgSize = availableSize;
 
   const [boardState, setboardState] = useState({
@@ -39,11 +39,9 @@ const Board = ({
         const container = containerRef.current;
         const rect = container.getBoundingClientRect();
 
-        // Get the actual available space
         const containerWidth = rect.width;
         const containerHeight = rect.height;
 
-        // Calculate the maximum size that fits maintaining square aspect ratio
         const maxSize = Math.min(containerWidth, containerHeight);
 
         setDimensions({
@@ -53,13 +51,10 @@ const Board = ({
       }
     };
 
-    // Initial calculation with a small delay to ensure DOM is ready
     const timer = setTimeout(updateDimensions, 0);
 
-    // Add resize listener
     window.addEventListener("resize", updateDimensions);
 
-    // Use ResizeObserver for container size changes if available
     let resizeObserver;
     if (window.ResizeObserver && containerRef.current) {
       resizeObserver = new ResizeObserver(updateDimensions);
@@ -114,7 +109,7 @@ const Board = ({
   // draw grid lines
   const renderGridLines = () => {
     const lines = [];
-    const strokeWidth = Math.max(1, cellSize * 0.008);
+    const strokeWidth = Math.max(2, cellSize * 0.012);
 
     for (let row = 0; row <= boardSize; row++) {
       const y = padding + row * cellSize;
@@ -125,8 +120,9 @@ const Board = ({
           y1={y}
           x2={padding + boardSize * cellSize}
           y2={y}
-          className="stroke-gray-400"
-          style={{ strokeWidth }}
+          stroke="#4a4845"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
         />
       );
     }
@@ -139,8 +135,9 @@ const Board = ({
           y1={padding}
           x2={x}
           y2={padding + boardSize * cellSize}
-          className="stroke-gray-400"
-          style={{ strokeWidth }}
+          stroke="#4a4845"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
         />
       );
     }
@@ -157,7 +154,7 @@ const Board = ({
     const centerX = padding + 2 * cellSize;
     const centerY = padding + 2 * cellSize;
 
-    const strokeWidth = Math.max(1, cellSize * 0.008);
+    const strokeWidth = Math.max(1.5, cellSize * 0.01);
 
     // main diagonals
     lines.push(
@@ -167,8 +164,9 @@ const Board = ({
         y1={startY}
         x2={endX}
         y2={endY}
-        className="stroke-gray-400"
-        style={{ strokeWidth }}
+        stroke="#4a4845"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
       />
     );
     lines.push(
@@ -178,8 +176,9 @@ const Board = ({
         y1={startY}
         x2={startX}
         y2={endY}
-        className="stroke-gray-400"
-        style={{ strokeWidth }}
+        stroke="#4a4845"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
       />
     );
 
@@ -199,8 +198,9 @@ const Board = ({
           y1={quad.y1}
           x2={quad.x2}
           y2={quad.y2}
-          className="stroke-gray-400"
-          style={{ strokeWidth }}
+          stroke="#4a4845"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
         />
       );
       lines.push(
@@ -210,8 +210,9 @@ const Board = ({
           y1={quad.y1}
           x2={quad.x1}
           y2={quad.y2}
-          className="stroke-gray-400"
-          style={{ strokeWidth }}
+          stroke="#4a4845"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
         />
       );
     });
@@ -307,10 +308,10 @@ const Board = ({
   return (
     <div
       ref={containerRef}
-      className="h-full w-full aspect-square flex items-center justify-center p-2"
+      className="h-full w-full aspect-square flex items-center justify-center p-4"
     >
       <div
-        className="border-2 border-gray-300 rounded-lg shadow-sm bg-white overflow-hidden"
+        className="relative"
         style={{
           width: svgSize + containerPadding,
           height: svgSize + containerPadding,
@@ -318,20 +319,86 @@ const Board = ({
           maxHeight: "100%",
         }}
       >
-        <svg
-          width={svgSize}
-          height={svgSize}
-          className="w-full h-full"
-          viewBox={`0 0 ${svgSize} ${svgSize}`}
+        {/* Decorative corner accents */}
+        <div className="absolute -top-2 -left-2 w-6 h-6 border-t-2 border-l-2 border-[#f95e5e] rounded-tl-lg"></div>
+        <div className="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-[#f95e5e] rounded-tr-lg"></div>
+        <div className="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-[#f95e5e] rounded-bl-lg"></div>
+        <div className="absolute -bottom-2 -right-2 w-6 h-6 border-b-2 border-r-2 border-[#f95e5e] rounded-br-lg"></div>
+
+        <div
+          className="border-2 border-[#3a3835] rounded-lg shadow-2xl bg-[#e8dcc8] overflow-hidden"
           style={{
-            display: "block",
-            margin: containerPadding / 2,
+            width: svgSize + containerPadding,
+            height: svgSize + containerPadding,
+            maxWidth: "100%",
+            maxHeight: "100%",
           }}
         >
-          <g>{renderGridLines()}</g>
-          <g>{renderDiagonalLines()}</g>
-          <g>{renderPieces()}</g>
-        </svg>
+          <svg
+            width={svgSize}
+            height={svgSize}
+            className="w-full h-full"
+            viewBox={`0 0 ${svgSize} ${svgSize}`}
+            style={{
+              display: "block",
+              margin: containerPadding / 2,
+            }}
+          >
+            {/* Background pattern for texture */}
+            <defs>
+              <pattern
+                id="woodGrain"
+                x="0"
+                y="0"
+                width="100"
+                height="100"
+                patternUnits="userSpaceOnUse"
+              >
+                <rect width="100" height="100" fill="#e8dcc8" />
+                <path
+                  d="M0,10 Q25,15 50,10 T100,10"
+                  stroke="#d4c4a8"
+                  strokeWidth="0.5"
+                  fill="none"
+                  opacity="0.3"
+                />
+                <path
+                  d="M0,30 Q25,35 50,30 T100,30"
+                  stroke="#d4c4a8"
+                  strokeWidth="0.5"
+                  fill="none"
+                  opacity="0.3"
+                />
+                <path
+                  d="M0,50 Q25,55 50,50 T100,50"
+                  stroke="#d4c4a8"
+                  strokeWidth="0.5"
+                  fill="none"
+                  opacity="0.3"
+                />
+                <path
+                  d="M0,70 Q25,75 50,70 T100,70"
+                  stroke="#d4c4a8"
+                  strokeWidth="0.5"
+                  fill="none"
+                  opacity="0.3"
+                />
+                <path
+                  d="M0,90 Q25,95 50,90 T100,90"
+                  stroke="#d4c4a8"
+                  strokeWidth="0.5"
+                  fill="none"
+                  opacity="0.3"
+                />
+              </pattern>
+            </defs>
+            <rect width={svgSize} height={svgSize} fill="url(#woodGrain)" />
+
+            <g>{renderGridLines()}</g>
+            <g>{renderDiagonalLines()}</g>
+            <g>{renderPieces()}</g>
+          </svg>
+        </div>
       </div>
     </div>
   );

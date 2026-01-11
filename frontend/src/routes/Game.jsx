@@ -50,10 +50,10 @@ const Game = () => {
 
   if (!isConnected || !gameState) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="flex h-full w-full items-center justify-center bg-[#262522]">
         <div className="text-center space-y-4">
-          <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-800 rounded-full animate-spin mx-auto"></div>
-          <div className="text-gray-800 font-light text-lg">
+          <div className="w-12 h-12 border-4 border-[#3a3835] border-t-[#f95e5e] rounded-full animate-spin mx-auto"></div>
+          <div className="text-gray-300 font-light text-lg">
             {!isConnected ? "Connecting to game..." : "Loading game state..."}
           </div>
         </div>
@@ -62,10 +62,10 @@ const Game = () => {
   }
 
   return (
-    <div className="h-full w-full flex flex-col lg:flex-row justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="h-full w-full flex flex-col lg:flex-row justify-center bg-[#262522]">
       {/* Game Board Area */}
-      <div className="flex-1 flex flex-col min-h-0 pt-20 md:pt-0 mb-10 md:mb-0">
-        <div className="flex-shrink-0">
+      <div className="flex-1 flex flex-col min-h-0 md:pt-0">
+        <div className="flex-shrink-0 px-2 py-2">
           <PlayerCard
             isUserCard={false}
             username={auth.user?.username || auth.guestId}
@@ -76,7 +76,7 @@ const Game = () => {
           />
         </div>
 
-        <div className="flex-1 flex justify-center items-center min-h-0 aspect-square">
+        <div className="flex-1 flex justify-center items-center min-h-0">
           <Board
             board={gameState.board}
             currentPlayer={gameState.currentPlayer}
@@ -89,7 +89,7 @@ const Game = () => {
           />
         </div>
 
-        <div className="flex-shrink-0 ">
+        <div className="flex-shrink-0 px-2 py-2">
           <PlayerCard
             isUserCard={true}
             username={auth.user?.username || auth.guestId}
@@ -99,11 +99,10 @@ const Game = () => {
             gameState={gameState}
           />
         </div>
-        {/* </div> */}
       </div>
 
       {/* Game Status Sidebar */}
-      <div className="w-full lg:w-80 flex-shrink-0 border-t lg:border-t-0 lg:border-l border-gray-200 bg-white lg:h-full shadow-lg">
+      <div className="w-full lg:w-80 flex-shrink-0 border-t lg:border-t-0 lg:border-l border-[#3a3835] bg-[#2f2d2a] lg:h-full shadow-2xl">
         <GameStatus gameState={gameState} />
       </div>
 
@@ -125,23 +124,23 @@ function WinnerModal({ winner, isOpen, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center z-50 bg-black/50"
+      className="fixed inset-0 flex items-center justify-center z-50 bg-black/60 backdrop-blur-sm"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 text-center font-sans">
-        <div className="text-4xl mb-4">🎉</div>
-        <h2 className="text-2xl font-bold mb-2 text-gray-800">Game Over!</h2>
-        <p className="mb-6 text-lg text-gray-600 font-light">{winner} wins!</p>
+      <div className="bg-[#2f2d2a] rounded-xl shadow-2xl max-w-md w-full mx-4 p-8 text-center border border-[#3a3835]">
+        <div className="text-6xl mb-4">🎉</div>
+        <h2 className="text-3xl font-bold mb-3 text-white">Game Over!</h2>
+        <p className="mb-8 text-xl text-gray-300">{winner} wins!</p>
         <button
           onClick={() => {
             onClose();
             navigate("/");
           }}
-          className="bg-gray-800 hover:bg-gray-900 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg"
+          className="bg-[#f95e5e] hover:bg-[#d94545] px-8 py-3 rounded-lg text-white font-semibold transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
         >
-          Close
+          Return Home
         </button>
       </div>
     </div>
@@ -152,13 +151,13 @@ const WaitingModal = ({ isOpen }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8 text-center font-sans">
-        <div className="w-12 h-12 border-2 border-gray-300 border-t-gray-800 rounded-full animate-spin mx-auto mb-4"></div>
-        <h2 className="text-xl font-bold mb-2 text-gray-800">
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/60 backdrop-blur-sm">
+      <div className="bg-[#2f2d2a] rounded-xl shadow-2xl max-w-md w-full mx-4 p-8 text-center border border-[#3a3835]">
+        <div className="w-12 h-12 border-4 border-[#3a3835] border-t-[#f95e5e] rounded-full animate-spin mx-auto mb-6"></div>
+        <h2 className="text-2xl font-bold mb-3 text-white">
           Waiting for player...
         </h2>
-        <p className="text-gray-600 font-light">
+        <p className="text-gray-400">
           Looking for another player to join the game
         </p>
       </div>
