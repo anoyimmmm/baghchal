@@ -1,11 +1,14 @@
 import { useState, useEffect, useContext } from "react";
+import BaseModal from "./ui/BaseModal";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import SecondaryButton from "./ui/SecondaryButton";
+import PrimaryButton from "./ui/PrimaryButton";
 
-const AuthModal = ({ isOpen, onClose }) => {
+export default function AuthModal({ isOpen, onClose }) {
   const baseHttpUrl = import.meta.env.VITE_BASE_HTTP_URL;
-  const { auth, setAuth } = useContext(AuthContext);
   const [mode, setMode] = useState("login");
+  const { auth, setAuth } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -14,13 +17,8 @@ const AuthModal = ({ isOpen, onClose }) => {
     avatar: null,
   });
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("error");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    console.log(auth.guestId);
-  }, [auth]);
-
-  if (!isOpen) return null;
 
   const toggleMode = () => {
     setMode(mode === "login" ? "signup" : "login");
@@ -38,6 +36,7 @@ const AuthModal = ({ isOpen, onClose }) => {
   const handleContinueAsGuest = () => {
     const guestId = crypto.randomUUID();
     setAuth({ isAuthenticated: false, guestId: guestId });
+    console.log("Guest ID:", guestId);
     onClose();
   };
 
@@ -84,192 +83,172 @@ const AuthModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white text-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-lg mx-auto border border-gray-200 max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center space-x-3">
-            <span className="text-3xl">{mode === "login" ? "🔐" : "👤"}</span>
-            <h2 className="text-2xl font-bold text-gray-800 capitalize">
-              {mode}
-            </h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={(mode === "login" ? "🔐" : "👤") + mode}
+    >
+      <div className="space-y-6">
+        <FormField label="Username">
+          <Input
+            name="username"
+            placeholder="Enter your username"
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
+        </FormField>
+
+        {mode === "signup" && (
+          <>
+            <FormField label="Email Address">
+              <Input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={handleChange}
+                required
               />
-            </svg>
-          </button>
-        </div>
+            </FormField>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Username Field */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">
-              Username
-            </label>
-            <input
-              name="username"
-              placeholder="Enter your username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-              className="w-full p-4 border border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all"
-            />
-          </div>
+            <FormField label="Display Name">
+              <Input
+                name="displayName"
+                placeholder="How should we call you?"
+                value={formData.displayName}
+                onChange={handleChange}
+              />
+            </FormField>
 
-          {mode === "signup" && (
-            <>
-              {/* Email Field */}
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">
-                  Email Address
-                </label>
-                <input
-                  name="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-4 border border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all"
-                />
-              </div>
+            <FormField label="Profile Picture (Optional)">
+              <Input
+                type="file"
+                name="avatar"
+                accept="image/*"
+                onChange={handleChange}
+              />
+            </FormField>
+          </>
+        )}
 
-              {/* Display Name Field */}
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">
-                  Display Name
-                </label>
-                <input
-                  name="displayName"
-                  placeholder="How should we call you?"
-                  value={formData.displayName}
-                  onChange={handleChange}
-                  className="w-full p-4 border border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all"
-                />
-              </div>
+        <FormField label="Password">
+          <Input
+            type="password"
+            name="password"
+            placeholder="Enter your password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+        </FormField>
 
-              {/* Avatar Upload */}
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">
-                  Profile Picture (Optional)
-                </label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    name="avatar"
-                    accept="image/*"
-                    onChange={handleChange}
-                    className="w-full p-4 border border-gray-300 rounded-xl bg-white text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 file:cursor-pointer cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all"
-                  />
-                </div>
-              </div>
-            </>
-          )}
+        {/* login/signup button  */}
+        <PrimaryButton
+          variant="primary"
+          loading={loading}
+          onClick={handleSubmit}
+        >
+          {mode === "login" ? "Log In" : "Create Account"}
+        </PrimaryButton>
 
-          {/* Password Field */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="w-full p-4 border border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all"
-            />
-          </div>
+        {/* Guestbutton  */}
+        {!auth.guestId ? (
+          <SecondaryButton onClick={handleContinueAsGuest}>
+            Continue as Guest
+          </SecondaryButton>
+        ) : (
+          ""
+        )}
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gray-800 text-white py-4 px-6 rounded-xl hover:bg-gray-900 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5  duration-200 disabled:transform-none disabled:shadow-lg flex items-center justify-center space-x-2"
-          >
-            {loading ? (
+        <Alert message={message} type={messageType} />
+
+        <div className="text-center pt-4 border-t border-[#3a3835]">
+          <p className="text-gray-400">
+            {mode === "login" ? (
               <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                <span>Please wait...</span>
+                Don't have an account?{" "}
+                <button
+                  onClick={toggleMode}
+                  className="text-[#f95e5e] hover:text-[#e74c4c] font-semibold hover:underline transition-colors"
+                >
+                  Sign up here
+                </button>
               </>
             ) : (
-              <span>{mode === "login" ? "Log In" : "Create Account"}</span>
+              <>
+                Already have an account?{" "}
+                <button
+                  onClick={toggleMode}
+                  className="text-[#f95e5e] hover:text-[#e74c4c] font-semibold hover:underline transition-colors"
+                >
+                  Log in here
+                </button>
+              </>
             )}
-          </button>
-
-          {/* if  logged in or has guestId, don't show this button  */}
-          {auth.guestId || auth.user ? (
-            ""
-          ) : (
-            <button
-              type="button"
-              onClick={handleContinueAsGuest}
-              className="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-xl hover:bg-gray-200 transition-colors font-medium border border-gray-300"
-            >
-              Continue as Guest
-            </button>
-          )}
-
-          {/* Message Display */}
-          {message && (
-            <div
-              className={`p-4 rounded-xl text-sm ${
-                message.includes("successful")
-                  ? "bg-green-50 text-green-800 border border-green-200"
-                  : "bg-red-50 text-red-800 border border-red-200"
-              }`}
-            >
-              {message}
-            </div>
-          )}
-
-          {/* Mode Toggle */}
-          <div className="text-center pt-4 border-t border-gray-200">
-            <p className="text-gray-600">
-              {mode === "login" ? (
-                <>
-                  Don't have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={toggleMode}
-                    className="text-gray-800 hover:text-gray-900 font-medium hover:underline transition-colors"
-                  >
-                    Sign up here
-                  </button>
-                </>
-              ) : (
-                <>
-                  Already have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={toggleMode}
-                    className="text-gray-800 hover:text-gray-900 font-medium hover:underline transition-colors"
-                  >
-                    Log in here
-                  </button>
-                </>
-              )}
-            </p>
-          </div>
-        </form>
+          </p>
+        </div>
       </div>
-    </div>
+    </BaseModal>
+  );
+}
+
+const Input = ({
+  type = "text",
+  name,
+  value,
+  onChange,
+  placeholder,
+  required,
+  accept,
+  className = "",
+}) => {
+  const baseClasses =
+    "w-full p-4 bg-[#1a1a1a] border border-[#3a3835] rounded-lg text-gray-200 placeholder-gray-600 focus:outline-none focus:border-[#f95e5e] transition-all";
+
+  if (type === "file") {
+    return (
+      <input
+        type="file"
+        name={name}
+        accept={accept}
+        onChange={onChange}
+        className={`${baseClasses} file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[#3a3835] file:text-gray-300 hover:file:bg-[#454240] file:cursor-pointer cursor-pointer ${className}`}
+      />
+    );
+  }
+
+  return (
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      required={required}
+      className={`${baseClasses} ${className}`}
+    />
   );
 };
 
-export default AuthModal;
+const FormField = ({ label, children }) => (
+  <div>
+    <label className="block text-gray-300 font-semibold mb-2 text-sm">
+      {label}
+    </label>
+    {children}
+  </div>
+);
+
+const Alert = ({ message, type = "error" }) => {
+  if (!message) return null;
+
+  const styles = {
+    success: "bg-green-900/30 text-green-300 border border-green-800",
+    error: "bg-red-900/30 text-red-300 border border-red-800",
+  };
+
+  return (
+    <div className={`p-4 rounded-lg text-sm ${styles[type]}`}>{message}</div>
+  );
+};
