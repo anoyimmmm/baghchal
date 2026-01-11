@@ -5,21 +5,22 @@ import { Outlet } from "react-router-dom";
 
 function Layout({ setAuthModalOpen }) {
   return (
-    <>
-      <div className="flex h-screen w-screen bg-gray-50">
-        <SideBar setAuthModalOpen={setAuthModalOpen} />
-        <div
-          className="flex h-full w-full md:p-5 p-0 justify-center overflow-hidden 
-        "
-        >
+    <div className="flex h-screen w-screen bg-[#262522] overflow-hidden">
+      <SideBar setAuthModalOpen={setAuthModalOpen} />
+      <main className="flex-1 flex flex-col h-full overflow-hidden">
+        {/* Mobile top padding to account for fixed navbar */}
+        <div className="md:hidden h-16 shrink-0"></div>
+        {/* Scrollable content area */}
+        <div className="flex-1 overflow-y-auto md:p-5 p-0">
           <Outlet />
         </div>
-      </div>
-    </>
+      </main>
+    </div>
   );
 }
 
 export default Layout;
+
 function SideBar({ setAuthModalOpen }) {
   const { auth, setAuth } = useContext(AuthContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -31,7 +32,6 @@ function SideBar({ setAuthModalOpen }) {
     } else {
       setAuth({ isAuthenticated: false });
     }
-    // Close mobile menu after action
     setIsMobileMenuOpen(false);
   };
 
@@ -42,11 +42,10 @@ function SideBar({ setAuthModalOpen }) {
   return (
     <>
       {/* Mobile Navigation Bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-300 px-4 py-1 sm:py-2 flex items-center justify-between">
-        {/* Hamburger Menu Button */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-[#2f2d2a] border-b border-[#3a3835] px-4 py-3 flex items-center justify-between shadow-lg">
         <button
           onClick={toggleMobileMenu}
-          className="p-2 text-gray-600 hover:text-gray-800 focus:outline-none"
+          className="p-2 text-gray-300 hover:text-white focus:outline-none transition-colors"
         >
           <svg
             className="w-6 h-6"
@@ -72,25 +71,23 @@ function SideBar({ setAuthModalOpen }) {
           </svg>
         </button>
 
-        {/* Logo/Project Name */}
         <div
           onClick={() => {
             navigate("/");
             setIsMobileMenuOpen(false);
           }}
-          className="text-xl font-extrabold text-gray-800"
+          className="text-xl font-bold text-white cursor-pointer hover:text-[#f95e5e] transition-colors"
         >
-          BaghChal
+          Bagh Chal
         </div>
 
-        {/* Spacer to center the logo */}
         <div className="w-10"></div>
       </div>
 
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black/30 z-40"
+          className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
@@ -98,9 +95,9 @@ function SideBar({ setAuthModalOpen }) {
       {/* Sidebar */}
       <div
         className={`
-          h-full bg-white border-r border-gray-300 z-50 flex flex-col
-          md:relative md:w-64 md:translate-x-0
-          fixed w-64 top-0 left-0 transform transition-transform duration-300 ease-in-out
+          h-screen bg-[#2f2d2a] border-r border-[#3a3835] z-50 flex flex-col shadow-2xl
+          md:relative md:w-72 md:translate-x-0 md:h-full
+          fixed w-72 top-0 left-0 bottom-0 transform transition-transform duration-300 ease-in-out
           ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
           md:block
         `}
@@ -108,7 +105,7 @@ function SideBar({ setAuthModalOpen }) {
         {/* Mobile Close Button */}
         <button
           onClick={() => setIsMobileMenuOpen(false)}
-          className="md:hidden absolute top-4 right-4 p-2 text-gray-600 hover:text-gray-800"
+          className="md:hidden absolute top-4 right-4 p-2 text-gray-400 hover:text-white transition-colors z-10"
         >
           <svg
             className="w-6 h-6"
@@ -126,58 +123,95 @@ function SideBar({ setAuthModalOpen }) {
         </button>
 
         {/* Top Section */}
-        <div className="flex-1 p-8">
+        <div className="flex-1 p-8 overflow-y-auto min-h-0">
           {/* Logo/Home Button */}
-          <div className="text-center mb-8 mt-8 md:mt-0">
+          <div className="text-center mb-10 mt-8 md:mt-0">
             <button
               onClick={() => {
                 navigate("/");
                 setIsMobileMenuOpen(false);
               }}
-              className="text-2xl font-extrabold text-gray-800 mb-6 hover:text-gray-600 transition-colors"
+              className="text-3xl font-bold text-white mb-2 hover:text-[#f95e5e] transition-colors tracking-tight"
             >
-              BaghChal
+              Bagh Chal
             </button>
+            <div className="w-16 h-1 bg-[#f95e5e] mx-auto rounded"></div>
           </div>
 
           {/* User Profile Section */}
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gray-300 rounded-full mx-auto mb-4 flex items-center justify-center text-gray-600 text-xl font-medium">
-              {auth.user?.username?.[0]?.toUpperCase() || "G"}
-            </div>
+          <div className="bg-[#262522] rounded-xl p-6 mb-8 border border-[#3a3835] shadow-lg">
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-[#f95e5e] to-[#d94545] rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+                {auth.user?.username?.[0]?.toUpperCase() || "G"}
+              </div>
 
-            <div className="text-gray-800 font-bold text-lg mb-6">
-              {auth.user?.username || "GUEST"}
-            </div>
+              <div className="text-white font-bold text-xl mb-1">
+                {auth.user?.username || "Guest Player"}
+              </div>
 
-            {/* Navigation */}
-            <div className="space-y-4">
-              <button
-                onClick={() => {
-                  navigate("/rules");
-                  setIsMobileMenuOpen(false);
-                }}
-                className="block w-full text-gray-800 text-lg font-extrabold hover:text-gray-600  transition-colors"
-              >
-                RULES
-              </button>
+              <div className="text-gray-500 text-sm">
+                {auth.isAuthenticated ? "Player" : "Not logged in"}
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <nav className="space-y-2">
+            <button
+              onClick={() => {
+                navigate("/");
+                setIsMobileMenuOpen(false);
+              }}
+              className="w-full flex items-center gap-3 text-gray-300 text-base font-semibold hover:text-white hover:bg-[#262522] px-4 py-3 rounded-lg transition-all group"
+            >
+              <span className="text-xl">🏠</span>
+              <span>Home</span>
+            </button>
+
+            <button
+              onClick={() => {
+                navigate("/rules");
+                setIsMobileMenuOpen(false);
+              }}
+              className="w-full flex items-center gap-3 text-gray-300 text-base font-semibold hover:text-white hover:bg-[#262522] px-4 py-3 rounded-lg transition-all group"
+            >
+              <span className="text-xl">📖</span>
+              <span>Rules</span>
+            </button>
+          </nav>
+
+          {/* Game Stats */}
+          <div className="mt-5 pt-5 border-t border-[#3a3835]">
+            <div className="text-gray-500 text-xs uppercase tracking-wide mb-4 font-semibold">
+              Quick Stats
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-[#262522] rounded-lg p-3 border border-[#3a3835]">
+                <div className="text-2xl font-bold text-white">-</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                  Wins
+                </div>
+              </div>
+              <div className="bg-[#262522] rounded-lg p-3 border border-[#3a3835]">
+                <div className="text-2xl font-bold text-white">-</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                  Games
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Section - Login/Logout Button */}
-        <div className="p-8 border-t border-gray-300">
+        <div className="p-6 border-t border-[#3a3835] bg-[#262522] shrink-0">
           <button
             onClick={handleLoginToggle}
-            className="w-full bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors font-medium"
+            className="w-full bg-[#f95e5e] text-white px-6 py-3 rounded-lg hover:bg-[#d94545] transition-all font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
           >
             {auth.isAuthenticated ? "Logout" : "Login"}
           </button>
         </div>
       </div>
-
-      {/* Content Spacer for Mobile */}
-      <div className="md:hidden h-16"></div>
     </>
   );
 }
