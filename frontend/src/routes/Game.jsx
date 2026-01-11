@@ -7,7 +7,8 @@ import { useNavigate } from "react-router-dom";
 import useSound from "use-sound";
 import moveSound from "../assets/move_sound.mp3";
 import PlayerCard from "../components/PlayerCard";
-import GameStatus from "../components/GameStatus";
+// import GameStatusIndicator from "../components/GameStatusIndicator";
+import GameStatusIndicator from "../components/GameStatusIndicator";
 
 const Game = () => {
   const { auth } = useContext(AuthContext);
@@ -62,7 +63,7 @@ const Game = () => {
   }
 
   return (
-    <div className="h-full w-full flex flex-col lg:flex-row justify-center bg-[#262522]">
+    <div className="h-full w-full flex flex-col lg:flex-row justify-center bg-[#262522] overflow-hidden">
       <div className="flex-1 flex flex-col min-h-0 md:pt-0">
         {/* Player Cards Row */}
         <div className="px-2 py-2">
@@ -92,7 +93,10 @@ const Game = () => {
 
       {/* Game Status Sidebar */}
       <div className="w-full lg:w-60 flex-shrink-0 border-t lg:border-t-0 lg:border-l border-[#3a3835] bg-[#2f2d2a] lg:h-full shadow-2xl">
-        <GameStatus gameState={gameState} />
+        <GameStatusIndicator
+          gameState={gameState}
+          moveHistory={gameState.history}
+        />
       </div>
 
       <WinnerModal
