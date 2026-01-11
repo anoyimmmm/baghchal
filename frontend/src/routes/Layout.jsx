@@ -203,7 +203,7 @@ function SideBar({ setAuthModalOpen }) {
         </div>
 
         {/* Bottom Section - Login/Logout Button */}
-        <div className="p-6 border-t border-[#3a3835] bg-[#262522] shrink-0">
+        <div className=" absolute bottom-2 px-4 py-2 w-full border-t-2 border-[#3a3835] shrink-0">
           <button
             onClick={handleLoginToggle}
             className="w-full bg-[#f95e5e] text-white px-6 py-3 rounded-lg hover:bg-[#d94545] transition-all font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
