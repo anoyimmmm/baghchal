@@ -10,8 +10,7 @@ const SecondaryButton = ({ onClick, children, loading, className = "" }) => (
       </>
     ) : (
       children
-    )}
-    d{" "}
+    )}{" "}
   </button>
 );
 
