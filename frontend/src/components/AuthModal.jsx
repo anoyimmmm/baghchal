@@ -6,7 +6,7 @@ import SecondaryButton from "./ui/SecondaryButton";
 import PrimaryButton from "./ui/PrimaryButton";
 
 export default function AuthModal({ isOpen, onClose }) {
-  const baseHttpUrl = import.meta.env.BASE_HTTP_URL;
+  const baseHttpUrl = import.meta.env.VITE_BASE_HTTP_URL;
   const [mode, setMode] = useState("login");
   const { auth, setAuth } = useContext(AuthContext);
   const [formData, setFormData] = useState({

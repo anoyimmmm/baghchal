@@ -25,7 +25,8 @@ const initialGameState = {
 
 export const WebSocketContext = createContext(null);
 export const useWebSocket = () => useContext(WebSocketContext);
-const baseSocketUrl = import.meta.env.BASE_WS_URL;
+const baseSocketUrl = import.meta.env.VITE_BASE_WS_URL;
+console.log("baseSocketUrl: ", baseSocketUrl);
 
 export const WebSocketProvider = ({ children }) => {
   const { auth } = useContext(AuthContext);
@@ -47,6 +48,7 @@ export const WebSocketProvider = ({ children }) => {
       username: auth.user?.username || auth.guestId,
     });
     const wsUrl = `${baseSocketUrl}?${params}`;
+    console.log("wsUrl: ", wsUrl);
 
     socketRef.current = new WebSocket(wsUrl);
 
