@@ -2,11 +2,14 @@ from channels.generic.websocket import WebsocketConsumer
 import json
 from asgiref.sync import async_to_sync
 from urllib.parse import parse_qs
-from .utils import is_valid_uuid
+
+# from .utils import is_valid_uuid
 from .core.gameState import game_states
 from .core.utils import get_initial_game_state, update_game_state, cleanup_game_states
 import random
 import uuid
+
+GameIdLen = 8
 
 
 class GameConsumer(WebsocketConsumer):
@@ -30,7 +33,7 @@ class GameConsumer(WebsocketConsumer):
             self.close(code=4000)
             return
 
-        if self.mode != "quick" and not is_valid_uuid(self.game_id):
+        if self.mode != "quick":
             print("Error: Invalid game ID for non-quick mode")
             self.close(code=4000)
             return
@@ -84,7 +87,7 @@ class GameConsumer(WebsocketConsumer):
                 print(f"Joined waiting game: {self.room_group_name}")
             else:
                 # Create new game for quick mode
-                new_game_id = str(uuid.uuid4())
+                new_game_id = str(uuid.uuid4())[:GameIdLen]
                 self.room_group_name = f"game_{new_game_id}"
                 game_states[self.room_group_name] = get_initial_game_state()
                 print(f"Created new quick game: {self.room_group_name}")

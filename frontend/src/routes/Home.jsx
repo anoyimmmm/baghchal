@@ -103,13 +103,15 @@ export default function Home() {
 }
 
 const Modal = ({ isOpen, onClose, mode }) => {
+  // ? is this the correct place to write constant?
+  const GameIdLength = 8;
   const { connect } = useWebSocket();
   const [gameId, setGameId] = useState(() => crypto.randomUUID());
   const [joinId, setJoinId] = useState("");
   const [playerRole, setPlayerRole] = useState("tiger");
 
   const generateGameId = () => {
-    return crypto.randomUUID();
+    return crypto.randomUUID().substring(0, GameIdLength);
   };
 
   useEffect(() => {
