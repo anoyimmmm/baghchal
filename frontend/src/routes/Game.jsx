@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, use, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useWebSocket } from "../context/WebSocketContext";
 import Board from "../components/Board";
 import { useParams } from "react-router-dom";
@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import useSound from "use-sound";
 import moveSound from "../assets/move_sound.mp3";
 import PlayerCard from "../components/PlayerCard";
-// import GameStatusIndicator from "../components/GameStatusIndicator";
 import GameStatusIndicator from "../components/GameStatusIndicator";
 
 const Game = () => {

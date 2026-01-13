@@ -1,5 +1,5 @@
 import { createContext, useContext, useRef, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
 
 const initialGameState = {

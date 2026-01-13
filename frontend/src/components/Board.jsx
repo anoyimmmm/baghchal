@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import Piece from "./Piece";
 import ValidateMove from "./utilities/MoveValidation.js";
 import { AuthContext } from "../context/AuthContext.jsx";
