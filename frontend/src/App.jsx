@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import Game from "./routes/Game";
 import Layout from "./routes/Layout";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import UserProfile from "./routes/UserProfile";
 import Home from "./routes/Home";
 import { AuthContext } from "./context/AuthContext";
@@ -19,37 +19,52 @@ function App() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
-    // if logged in or guestid saved , save it to browser
+    // if logged in or guestid saved, save it to browser
     if (auth.user || auth?.guestId) {
       localStorage.setItem("auth", JSON.stringify(auth));
     } else {
-      //else for  prompt login with option to continue as guest
+      //else prompt login with option to continue as guest
       setAuthModalOpen(true);
     }
   }, [auth]);
 
+  // Create the router configuration
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: (
+        <WebSocketProvider>
+          <Layout setAuthModalOpen={setAuthModalOpen} />
+        </WebSocketProvider>
+      ),
+      children: [
+        {
+          index: true,
+          element: <Home />,
+        },
+        {
+          path: "user",
+          element: <UserProfile />,
+        },
+        {
+          path: "game/:gameId",
+          element: <Game />,
+        },
+        {
+          path: "rules",
+          element: <Rules />,
+        },
+      ],
+    },
+  ]);
+
   return (
     <AuthContext value={{ auth, setAuth }}>
-      <Router>
-        <WebSocketProvider>
-          <Routes>
-            <Route
-              path="/"
-              element={<Layout setAuthModalOpen={setAuthModalOpen} />}
-            >
-              <Route index element={<Home />} />
-              <Route path="user" element={<UserProfile />} />
-              <Route path="game/:gameId" element={<Game />} />
-              <Route path="rules" element={<Rules />} />
-            </Route>
-          </Routes>
-        </WebSocketProvider>
-      </Router>
+      <RouterProvider router={router} />
       <AuthModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
       />
-      ;
     </AuthContext>
   );
 }
