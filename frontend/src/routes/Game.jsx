@@ -1,13 +1,13 @@
 import { useState, useEffect, useContext } from "react";
 import { useWebSocket } from "../context/WebSocketContext";
 import Board from "../components/Board";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useBlocker } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import useSound from "use-sound";
 import moveSound from "../assets/move_sound.mp3";
 import PlayerCard from "../components/PlayerCard";
 import GameStatusIndicator from "../components/GameStatusIndicator";
+import BaseModal from "../components/ui/BaseModal";
 
 const Game = () => {
   const { auth } = useContext(AuthContext);
@@ -15,10 +15,27 @@ const Game = () => {
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const [winner, setWinner] = useState("");
+  const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState(null);
   const [playMoveSound] = useSound(moveSound);
 
   let { gameId } = useParams();
   gameId = gameId.replace("game_", "");
+
+  // Block navigation when game is in progress
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      gameState?.status !== "over" &&
+      gameState?.status !== "waiting" &&
+      currentLocation.pathname !== nextLocation.pathname
+  );
+
+  useEffect(() => {
+    if (blocker.state === "blocked") {
+      setShowLeaveConfirmation(true);
+      setPendingNavigation(() => blocker.proceed);
+    }
+  }, [blocker]);
 
   useEffect(() => {
     if (gameId && !isConnected) {
@@ -37,15 +54,33 @@ const Game = () => {
     } else {
       console.log("no game state");
     }
-  }, [gameState]);
+  }, [gameState, gameId, isConnected, connect, playMoveSound]);
 
-  if (!(auth.user || auth.guestId)) {
-    navigate("/");
-  }
+  useEffect(() => {
+    if (!(auth.user || auth.guestId)) {
+      navigate("/");
+    }
+  }, [auth, navigate]);
 
   const handleMoveSend = (move) => {
     console.log("sending move ", move);
     send(JSON.stringify(move));
+  };
+
+  const handleLeaveConfirm = () => {
+    setShowLeaveConfirmation(false);
+    if (pendingNavigation) {
+      pendingNavigation();
+      setPendingNavigation(null);
+    }
+  };
+
+  const handleLeaveCancel = () => {
+    setShowLeaveConfirmation(false);
+    if (blocker.state === "blocked") {
+      blocker.reset();
+    }
+    setPendingNavigation(null);
   };
 
   if (!isConnected || !gameState) {
@@ -104,6 +139,11 @@ const Game = () => {
         onClose={() => setModalOpen(false)}
       />
       <WaitingModal isOpen={gameState?.status === "waiting"} />
+      <LeaveConfirmationModal
+        isOpen={showLeaveConfirmation}
+        onConfirm={handleLeaveConfirm}
+        onCancel={handleLeaveCancel}
+      />
     </div>
   );
 };
@@ -154,5 +194,32 @@ const WaitingModal = ({ isOpen }) => {
         </p>
       </div>
     </div>
+  );
+};
+
+const LeaveConfirmationModal = ({ isOpen, onConfirm, onCancel }) => {
+  return (
+    <BaseModal isOpen={isOpen} onClose={onCancel} title="Leave Game?">
+      <div className="space-y-6">
+        <p className="text-gray-300 text-lg">
+          Are you sure you want to leave? The game is still in progress and you
+          may lose your current match.
+        </p>
+        <div className="flex gap-4 justify-end">
+          <button
+            onClick={onCancel}
+            className="px-6 py-2.5 rounded-lg text-white font-semibold bg-[#3a3835] hover:bg-[#4a4845] transition-all"
+          >
+            Stay in Game
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-6 py-2.5 rounded-lg text-white font-semibold bg-[#f95e5e] hover:bg-[#d94545] transition-all"
+          >
+            Leave Game
+          </button>
+        </div>
+      </div>
+    </BaseModal>
   );
 };
